@@ -1,0 +1,67 @@
+What do we want to replace...
+
+*** Boolean:
+
+boolean -> id0_boolean_t
+
+*** Chars / 8-bit ints:
+
+signed char -> id0_signed_char_t
+unsigned char -> id0_unsigned_char_t
+
+THEN
+
+Same but with tabs
+
+THEN
+
+char -> id0_char_t
+
+THEN
+
+byte -> id0_byte_t (even though it's just an unsigned char in original code by definition...)
+
+*** 16-bit ints:
+
+NOT FOR NOW (see why soon)
+
+*** 32-bit ints:
+
+(signed/unsigned) long int -> Never mentioned
+
+THEN
+
+signed long -> id0_signed_long_t
+unsigned long -> id0_unsigned_long_t
+
+THEN
+
+Same but with tabs
+
+THEN
+
+long -> id0_long_t
+
+THEN
+
+longword -> id0_longword_t (even though it's just unsigned long by definition...)
+
+*** 16-bit ints:
+
+short -> id0_short_t (mentioned just once)
+unsigned int -> Never mentinoed (only once in the "word" typedef in ID_HEADS.H)
+signed int -> Never mentioned
+word -> id0_word_t (same as unsigned int in the original code)
+
+THEN
+
+int -> id0_int_t
+unsigned -> id0_unsigned_t
+
+*** floats??? (c3_draw.c)
+
+See c3_draw.c - What should we do here???
+
+*** doubles??? (c3_draw.c)
+
+*** Replacements of MAXINT and MININT??? (c3_draw.c)

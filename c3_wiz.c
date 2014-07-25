@@ -75,9 +75,9 @@
 =============================================================================
 */
 
-long		lastnuke,lasthand;
-int			handheight;
-int			boltsleft;
+id0_long_t		lastnuke,lasthand;
+id0_int_t			handheight;
+id0_int_t			boltsleft;
 
 /*
 =============================================================================
@@ -87,16 +87,16 @@ int			boltsleft;
 =============================================================================
 */
 
-int			lasttext,lastcompass;
-int			bolttimer;
-unsigned	lastfiretime;
+id0_int_t			lasttext,lastcompass;
+id0_int_t			bolttimer;
+id0_unsigned_t	lastfiretime;
 
-int	strafeangle[9] = {0,90,180,270,45,135,225,315,0};
+id0_int_t	strafeangle[9] = {0,90,180,270,45,135,225,315,0};
 
 
 //===========================================================================
 
-void DrawChar (unsigned x, unsigned y, unsigned tile);
+void DrawChar (id0_unsigned_t x, id0_unsigned_t y, id0_unsigned_t tile);
 void RedrawStatusWindow (void);
 void GiveBolt (void);
 void TakeBolt (void);
@@ -104,12 +104,12 @@ void GiveNuke (void);
 void TakeNuke (void);
 void GivePotion (void);
 void TakePotion (void);
-void GiveKey (int keytype);
-void TakeKey (int keytype);
-void GiveScroll (int scrolltype,boolean show);
-void ReadScroll (int scroll);
-void GivePoints (int points);
-void DrawLevelNumber (int number);
+void GiveKey (id0_int_t keytype);
+void TakeKey (id0_int_t keytype);
+void GiveScroll (id0_int_t scrolltype,id0_boolean_t show);
+void ReadScroll (id0_int_t scroll);
+void GivePoints (id0_int_t points);
+void DrawLevelNumber (id0_int_t number);
 void DrawText (void);
 void DrawBars (void);
 
@@ -123,14 +123,14 @@ void DrinkPotion (void);
 
 //----------
 
-void SpawnPlayer (int tilex, int tiley, int dir);
-void Thrust (int angle, unsigned speed);
+void SpawnPlayer (id0_int_t tilex, id0_int_t tiley, id0_int_t dir);
+void Thrust (id0_int_t angle, id0_unsigned_t speed);
 void T_Player (objtype *ob);
 
-void AddPoints (int points);
+void AddPoints (id0_int_t points);
 
-void ClipMove (objtype *ob, long xmove, long ymove);
-boolean ShotClipMove (objtype *ob, long xmove, long ymove);
+void ClipMove (objtype *ob, id0_long_t xmove, id0_long_t ymove);
+id0_boolean_t ShotClipMove (objtype *ob, id0_long_t xmove, id0_long_t ymove);
 
 //===========================================================================
 
@@ -143,9 +143,9 @@ boolean ShotClipMove (objtype *ob, long xmove, long ymove);
 ===============
 */
 
-void DrawChar (unsigned x, unsigned y, unsigned tile)
+void DrawChar (id0_unsigned_t x, id0_unsigned_t y, id0_unsigned_t tile)
 {
-	unsigned junk = latchpics[0];
+	id0_unsigned_t junk = latchpics[0];
 
 	EGAWRITEMODE(1);
 asm	mov	bx,[y]
@@ -195,7 +195,7 @@ asm	mov	ds,ax
 
 void RedrawStatusWindow (void)
 {
-	int	i,j,x;
+	id0_int_t	i,j,x;
 
 	DrawLevelNumber (gamestate.mapon);
 	lasttext = -1;
@@ -336,9 +336,9 @@ void TakePotion (void)
 ===============
 */
 
-void GiveKey (int keytype)
+void GiveKey (id0_int_t keytype)
 {
-	int	i,j,x;
+	id0_int_t	i,j,x;
 
 	SD_PlaySound (GETKEYSND);
 	gamestate.keys[keytype]++;
@@ -359,9 +359,9 @@ void GiveKey (int keytype)
 ===============
 */
 
-void TakeKey (int keytype)
+void TakeKey (id0_int_t keytype)
 {
-	int	i,j,x;
+	id0_int_t	i,j,x;
 
 	SD_PlaySound (USEKEYSND);
 	gamestate.keys[keytype]--;
@@ -384,9 +384,9 @@ void TakeKey (int keytype)
 ===============
 */
 
-void GiveScroll (int scrolltype,boolean show)
+void GiveScroll (id0_int_t scrolltype,id0_boolean_t show)
 {
-	int	i,x;
+	id0_int_t	i,x;
 
 	SD_PlaySound (GETSCROLLSND);
 	gamestate.scrolls[scrolltype] = true;
@@ -409,7 +409,7 @@ void GiveScroll (int scrolltype,boolean show)
 ===============
 */
 
-void GivePoints (int points)
+void GivePoints (id0_int_t points)
 {
 	pointcount = 1;
 	pointsleft += points;
@@ -426,10 +426,10 @@ void GivePoints (int points)
 ===============
 */
 
-void AddPoints (int points)
+void AddPoints (id0_int_t points)
 {
-	char	str[10];
-	int		len,x,i;
+	id0_char_t	str[10];
+	id0_int_t		len,x,i;
 
 	gamestate.score += points;
 
@@ -487,11 +487,11 @@ void GiveGoal (void)
 ===============
 */
 
-void DrawLevelNumber (int number)
+void DrawLevelNumber (id0_int_t number)
 {
-	char	str[10];
-	int		len;
-	unsigned	temp;
+	id0_char_t	str[10];
+	id0_int_t		len;
+	id0_unsigned_t	temp;
 
 	bufferofs = 0;
 	if (number<9)
@@ -519,10 +519,10 @@ void DrawLevelNumber (int number)
 
 void DrawText (void)
 {
-	unsigned	number;
-	char		str[80];
-	char 		far *text;
-	unsigned	temp;
+	id0_unsigned_t	number;
+	id0_char_t		str[80];
+	id0_char_t 		id0_far *text;
+	id0_unsigned_t	temp;
 
 	//
 	// draw a new text description if needed
@@ -542,7 +542,7 @@ void DrawText (void)
 	WindowX = 26;
 	WindowW = 232;
 
-	text = (char _seg *)grsegs[LEVEL1TEXT+mapon]+textstarts[number];
+	text = (id0_char_t id0_seg *)grsegs[LEVEL1TEXT+mapon]+textstarts[number];
 
 	_fmemcpy (str,text,80);
 
@@ -565,7 +565,7 @@ void DrawText (void)
 
 void DrawCompass (void)
 {
-	int		angle,number;
+	id0_int_t		angle,number;
 
 	//
 	// draw the compass if needed
@@ -600,8 +600,8 @@ void DrawCompass (void)
 
 void DrawBars (void)
 {
-	int			i;
-	unsigned	source,dest,topline;
+	id0_int_t			i;
+	id0_unsigned_t	source,dest,topline;
 
 	for (i=0;i<3;i++)
 	{
@@ -798,7 +798,7 @@ void SpawnBigPShot (void)
 void T_Pshot (objtype *ob)
 {
 	objtype	*check;
-	long	xmove,ymove,speed;
+	id0_long_t	xmove,ymove,speed;
 
 //
 // check current position for monsters having moved into it
@@ -878,9 +878,9 @@ void T_Pshot (objtype *ob)
 
 void BuildShotPower (void)
 {
-	int		newlines,topline;
-	long	i;
-	unsigned	source,dest;
+	id0_int_t		newlines,topline;
+	id0_long_t	i;
+	id0_unsigned_t	source,dest;
 
 	if (gamestate.shotpower == MAXSHOTPOWER)
 		return;
@@ -955,7 +955,7 @@ newline:
 
 void ClearShotPower (void)
 {
-	unsigned	source,dest,topline;
+	id0_unsigned_t	source,dest,topline;
 
 	topline = MAXSHOTPOWER - gamestate.shotpower;
 
@@ -1095,7 +1095,7 @@ void ContinueBolt (void)
 
 void CastNuke (void)
 {
-	int	angle;
+	id0_int_t	angle;
 
 	if (!gamestate.nukes)
 	{
@@ -1127,7 +1127,7 @@ void CastNuke (void)
 
 void DrinkPotion (void)
 {
-	unsigned	source,dest,topline;
+	id0_unsigned_t	source,dest,topline;
 
 	if (!gamestate.potions)
 	{
@@ -1192,11 +1192,11 @@ newline:
 ===============
 */
 
-extern	boolean	tileneeded[NUMFLOORS];
+extern	id0_boolean_t	tileneeded[NUMFLOORS];
 
-void ReadScroll (int scroll)
+void ReadScroll (id0_int_t scroll)
 {
-	int	i;
+	id0_int_t	i;
 
 //
 // make wall pictures purgable
@@ -1243,9 +1243,9 @@ waitkey:
 ===============
 */
 
-void TakeDamage (int points)
+void TakeDamage (id0_int_t points)
 {
-	unsigned	source,dest,topline;
+	id0_unsigned_t	source,dest,topline;
 
 	if (!gamestate.body || bordertime || godmode)
 		return;
@@ -1329,17 +1329,17 @@ newline:
 ==================
 */
 
-void OpenDoor (unsigned bx, unsigned by, unsigned doorbase)
+void OpenDoor (id0_unsigned_t bx, id0_unsigned_t by, id0_unsigned_t doorbase)
 {
-	int x,y;
-	unsigned	far *map;
+	id0_int_t x,y;
+	id0_unsigned_t	id0_far *map;
 
 	x=bx;
 	y=by;
 	map = mapsegs[0]+farmapylookup[y]+x;
 	while (tilemap[x][y]-doorbase<4)
 	{
-		tilemap[x][y] = (unsigned)actorat[x][y] = *map = 0;
+		tilemap[x][y] = (id0_unsigned_t)actorat[x][y] = *map = 0;
 		map--;
 		x--;
 	}
@@ -1347,7 +1347,7 @@ void OpenDoor (unsigned bx, unsigned by, unsigned doorbase)
 	map = mapsegs[0]+farmapylookup[y]+x;
 	while (tilemap[x][y]-doorbase<4)
 	{
-		tilemap[x][y] = (unsigned)actorat[x][y] = *map = 0;
+		tilemap[x][y] = (id0_unsigned_t)actorat[x][y] = *map = 0;
 		map++;
 		x++;
 	}
@@ -1356,7 +1356,7 @@ void OpenDoor (unsigned bx, unsigned by, unsigned doorbase)
 	map = mapsegs[0]+farmapylookup[y]+x;
 	while (tilemap[x][y]-doorbase<4)
 	{
-		tilemap[x][y] = (unsigned)actorat[x][y] = *map = 0;
+		tilemap[x][y] = (id0_unsigned_t)actorat[x][y] = *map = 0;
 		map-=mapwidth;
 		y--;
 	}
@@ -1364,7 +1364,7 @@ void OpenDoor (unsigned bx, unsigned by, unsigned doorbase)
 	map = mapsegs[0]+farmapylookup[y]+x;
 	while (tilemap[x][y]-doorbase<4)
 	{
-		tilemap[x][y] = (unsigned)actorat[x][y] = *map = 0;
+		tilemap[x][y] = (id0_unsigned_t)actorat[x][y] = *map = 0;
 		map+=mapwidth;
 		y++;
 	}
@@ -1381,7 +1381,7 @@ void OpenDoor (unsigned bx, unsigned by, unsigned doorbase)
 ==================
 */
 
-boolean HitSpecialTile (unsigned x, unsigned y, unsigned tile)
+id0_boolean_t HitSpecialTile (id0_unsigned_t x, id0_unsigned_t y, id0_unsigned_t tile)
 {
 	switch (tile)
 	{
@@ -1442,7 +1442,7 @@ boolean HitSpecialTile (unsigned x, unsigned y, unsigned tile)
 ==================
 */
 
-boolean TouchActor (objtype *ob, objtype *check)
+id0_boolean_t TouchActor (objtype *ob, objtype *check)
 {
 	if (ob->xh < check->xl || ob->xl > check->xh ||
 		ob->yh < check->yl || ob->yl > check->yh)
@@ -1465,7 +1465,7 @@ boolean TouchActor (objtype *ob, objtype *check)
 			GiveChest ();
 		else if (check->temp1 == B_GOAL)
 			GiveGoal ();
-		(unsigned)actorat[check->tilex][check->tiley] = 0;
+		(id0_unsigned_t)actorat[check->tilex][check->tiley] = 0;
 		RemoveObj (check);
 
 		return false;
@@ -1503,9 +1503,9 @@ void CalcBounds (objtype *ob)
 ===================
 */
 
-boolean LocationInActor (objtype *ob)
+id0_boolean_t LocationInActor (objtype *ob)
 {
-	int	x,y,xmin,ymin,xmax,ymax;
+	id0_int_t	x,y,xmin,ymin,xmax,ymax;
 	objtype *check;
 
 	CalcBounds (ob);
@@ -1542,13 +1542,13 @@ boolean LocationInActor (objtype *ob)
 ===================
 */
 
-void ClipMove (objtype *ob, long xmove, long ymove)
+void ClipMove (objtype *ob, id0_long_t xmove, id0_long_t ymove)
 {
-	int			xl,yl,xh,yh,tx,ty,nt1,nt2,x,y;
-	long		intersect,basex,basey,pointx,pointy;
-	unsigned	inside,total,tile;
+	id0_int_t			xl,yl,xh,yh,tx,ty,nt1,nt2,x,y;
+	id0_long_t		intersect,basex,basey,pointx,pointy;
+	id0_unsigned_t	inside,total,tile;
 	objtype		*check;
-	boolean		moveok;
+	id0_boolean_t		moveok;
 
 //
 // move player and check to see if any corners are in solid tiles
@@ -1574,12 +1574,12 @@ void ClipMove (objtype *ob, long xmove, long ymove)
 			if (!check)
 				continue;		// blank floor, walk ok
 
-			if ((unsigned)check<=LASTWALLTILE)
+			if ((id0_unsigned_t)check<=LASTWALLTILE)
 				goto blockmove;	// solid wall
 
-			if ((unsigned)check<=LASTSPECIALTILE)
+			if ((id0_unsigned_t)check<=LASTSPECIALTILE)
 			{
-				if ( HitSpecialTile (x,y,(unsigned)check-SPECTILESTART) )
+				if ( HitSpecialTile (x,y,(id0_unsigned_t)check-SPECTILESTART) )
 					goto blockmove;		// whatever it was, it blocked the move
 				else
 					continue;
@@ -1664,13 +1664,13 @@ blockmove:
 ===================
 */
 
-boolean ShotClipMove (objtype *ob, long xmove, long ymove)
+id0_boolean_t ShotClipMove (objtype *ob, id0_long_t xmove, id0_long_t ymove)
 {
-	int			xl,yl,xh,yh,tx,ty,nt1,nt2,x,y;
-	long		intersect,basex,basey,pointx,pointy;
-	unsigned	inside,total,tile;
+	id0_int_t			xl,yl,xh,yh,tx,ty,nt1,nt2,x,y;
+	id0_long_t		intersect,basex,basey,pointx,pointy;
+	id0_unsigned_t	inside,total,tile;
 	objtype		*check;
-	boolean		moveok;
+	id0_boolean_t		moveok;
 
 //
 // move shot and check to see if any corners are in solid tiles
@@ -1695,7 +1695,7 @@ boolean ShotClipMove (objtype *ob, long xmove, long ymove)
 			tile = tilemap[x][y];
 			if (tile)
 			{
-				if ((unsigned)(tile-EXPWALLSTART)<NUMEXPWALLS)
+				if ((id0_unsigned_t)(tile-EXPWALLSTART)<NUMEXPWALLS)
 					ExplodeWall (x,y);
 				goto blockmove;
 			}
@@ -1772,14 +1772,14 @@ statetype s_player = {0,0,&T_Player,&s_player};
 ===============
 */
 
-void SpawnPlayer (int tilex, int tiley, int dir)
+void SpawnPlayer (id0_int_t tilex, id0_int_t tiley, id0_int_t dir)
 {
 	player->obclass = playerobj;
 	player->active = true;
 	player->tilex = tilex;
 	player->tiley = tiley;
-	player->x = ((long)tilex<<TILESHIFT)+TILEGLOBAL/2;
-	player->y = ((long)tiley<<TILESHIFT)+TILEGLOBAL/2;
+	player->x = ((id0_long_t)tilex<<TILESHIFT)+TILEGLOBAL/2;
+	player->y = ((id0_long_t)tiley<<TILESHIFT)+TILEGLOBAL/2;
 	player->state = &s_player;
 	player->angle = (1-dir)*90;
 	player->size = MINDIST;
@@ -1797,9 +1797,9 @@ void SpawnPlayer (int tilex, int tiley, int dir)
 ===================
 */
 
-void Thrust (int angle, unsigned speed)
+void Thrust (id0_int_t angle, id0_unsigned_t speed)
 {
-	long xmove,ymove;
+	id0_long_t xmove,ymove;
 
 	if (lasttimecount>>5 != ((lasttimecount-tics)>>5) )
 	{
@@ -1832,8 +1832,8 @@ void Thrust (int angle, unsigned speed)
 
 void ControlMovement (objtype *ob)
 {
-	int	angle;
-	long	speed;
+	id0_int_t	angle;
+	id0_long_t	speed;
 
 
 	if (c.button1)
@@ -1847,9 +1847,9 @@ void ControlMovement (objtype *ob)
 		if (!mousexmove)
 			speed = 0;
 		else if (mousexmove<0)
-			speed = -(long)mousexmove*300;
+			speed = -(id0_long_t)mousexmove*300;
 		else
-			speed = -(long)mousexmove*300;
+			speed = -(id0_long_t)mousexmove*300;
 
 		if (c.xaxis == -1)
 		{
@@ -1922,9 +1922,9 @@ void ControlMovement (objtype *ob)
 	if (!mouseymove)
 		speed = 0;
 	else if (mouseymove<0)
-		speed = -(long)mouseymove*500;
+		speed = -(id0_long_t)mouseymove*500;
 	else
-		speed = -(long)mouseymove*200;
+		speed = -(id0_long_t)mouseymove*200;
 
 	if (c.yaxis == -1)
 	{
@@ -1969,9 +1969,9 @@ void ControlMovement (objtype *ob)
 
 void	T_Player (objtype *ob)
 {
-	int	angle,speed,scroll;
-	unsigned	text,tilex,tiley;
-	long	lspeed;
+	id0_int_t	angle,speed,scroll;
+	id0_unsigned_t	text,tilex,tiley;
+	id0_long_t	lspeed;
 
 
 	ControlMovement (ob);
@@ -1997,7 +1997,7 @@ void	T_Player (objtype *ob)
 			if (handheight>MAXHANDHEIGHT)
 				handheight = MAXHANDHEIGHT;
 
-			if ((unsigned)TimeCount/FIRETIME != lastfiretime)
+			if ((id0_unsigned_t)TimeCount/FIRETIME != lastfiretime)
 				BuildShotPower ();
 			lasthand = lasttimecount;
 		}
@@ -2012,12 +2012,12 @@ void	T_Player (objtype *ob)
 
 			if (gamestate.shotpower == MAXSHOTPOWER)
 			{
-				lastfiretime = (unsigned)TimeCount/FIRETIME;
+				lastfiretime = (id0_unsigned_t)TimeCount/FIRETIME;
 				BigShoot ();
 			}
 			else if (gamestate.shotpower)
 			{
-				lastfiretime = (unsigned)TimeCount/FIRETIME;
+				lastfiretime = (id0_unsigned_t)TimeCount/FIRETIME;
 				Shoot ();
 			}
 		}

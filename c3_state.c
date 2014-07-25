@@ -65,7 +65,7 @@ dirtype opposite[9] =
 ===================
 */
 
-void SpawnNewObj (unsigned x, unsigned y, statetype *state, unsigned size)
+void SpawnNewObj (id0_unsigned_t x, id0_unsigned_t y, statetype *state, id0_unsigned_t size)
 {
 	GetNewObj (false);
 	new->size = size;
@@ -74,15 +74,15 @@ void SpawnNewObj (unsigned x, unsigned y, statetype *state, unsigned size)
 
 	new->tilex = x;
 	new->tiley = y;
-	new->x = ((long)x<<TILESHIFT)+TILEGLOBAL/2;
-	new->y = ((long)y<<TILESHIFT)+TILEGLOBAL/2;
+	new->x = ((id0_long_t)x<<TILESHIFT)+TILEGLOBAL/2;
+	new->y = ((id0_long_t)y<<TILESHIFT)+TILEGLOBAL/2;
 	CalcBounds(new);
 	new->dir = nodir;
 
 	actorat[new->tilex][new->tiley] = new;
 }
 
-void SpawnNewObjFrac (long x, long y, statetype *state, unsigned size)
+void SpawnNewObjFrac (id0_long_t x, id0_long_t y, statetype *state, id0_unsigned_t size)
 {
 	GetNewObj (false);
 	new->size = size;
@@ -111,11 +111,11 @@ void SpawnNewObjFrac (long x, long y, statetype *state, unsigned size)
 ===================
 */
 
-boolean CheckHandAttack (objtype *ob)
+id0_boolean_t CheckHandAttack (objtype *ob)
 {
-	long deltax,deltay,size;
+	id0_long_t deltax,deltay,size;
 
-	size = (long)ob->size + player->size + ob->speed*tics;
+	size = (id0_long_t)ob->size + player->size + ob->speed*tics;
 	deltax = ob->x - player->x;
 	deltay = ob->y - player->y;
 
@@ -138,7 +138,7 @@ boolean CheckHandAttack (objtype *ob)
 
 void T_DoDamage (objtype *ob)
 {
-	int	points;
+	id0_int_t	points;
 
 
 	if (!CheckHandAttack (ob))
@@ -178,7 +178,7 @@ void T_DoDamage (objtype *ob)
 ==================================
 */
 
-boolean Walk (objtype *ob)
+id0_boolean_t Walk (objtype *ob)
 {
 	switch (ob->dir)
 	{
@@ -262,9 +262,9 @@ boolean Walk (objtype *ob)
 ==================================
 */
 
-void ChaseThink (objtype *obj, boolean diagonal)
+void ChaseThink (objtype *obj, id0_boolean_t diagonal)
 {
-	int deltax,deltay,i;
+	id0_int_t deltax,deltay,i;
 	dirtype d[3];
 	dirtype tdir, olddir, turnaround;
 
@@ -378,7 +378,7 @@ void ChaseThink (objtype *obj, boolean diagonal)
 =================
 */
 
-void MoveObj (objtype *ob, long move)
+void MoveObj (objtype *ob, id0_long_t move)
 {
 	ob->distance -=move;
 
@@ -429,13 +429,13 @@ void MoveObj (objtype *ob, long move)
 =================
 */
 
-boolean Chase (objtype *ob, boolean diagonal)
+id0_boolean_t Chase (objtype *ob, id0_boolean_t diagonal)
 {
-	long move;
-	long deltax,deltay,size;
+	id0_long_t move;
+	id0_long_t deltax,deltay,size;
 
 	move = ob->speed*tics;
-	size = (long)ob->size + player->size + move;
+	size = (id0_long_t)ob->size + player->size + move;
 
 	while (move)
 	{
@@ -458,8 +458,8 @@ boolean Chase (objtype *ob, boolean diagonal)
 		if (ob->dir == nodir)
 			ob->dir = north;
 
-		ob->x = ((long)ob->tilex<<TILESHIFT)+TILEGLOBAL/2;
-		ob->y = ((long)ob->tiley<<TILESHIFT)+TILEGLOBAL/2;
+		ob->x = ((id0_long_t)ob->tilex<<TILESHIFT)+TILEGLOBAL/2;
+		ob->y = ((id0_long_t)ob->tiley<<TILESHIFT)+TILEGLOBAL/2;
 		move -= ob->distance;
 
 		ChaseThink (ob,diagonal);
@@ -482,7 +482,7 @@ boolean Chase (objtype *ob, boolean diagonal)
 ===================
 */
 
-void ShootActor (objtype *ob, unsigned damage)
+void ShootActor (objtype *ob, id0_unsigned_t damage)
 {
 	ob->hitpoints -= damage;
 	if (ob->hitpoints<=0)

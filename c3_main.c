@@ -51,9 +51,9 @@
 */
 
 memptr		scalesegs[NUMPICS];
-char		str[80],str2[20];
-unsigned	tedlevelnum;
-boolean		tedlevel;
+id0_char_t		str[80],str2[20];
+id0_unsigned_t	tedlevelnum;
+id0_boolean_t		tedlevel;
 gametype	gamestate;
 exittype	playstate;
 
@@ -73,15 +73,15 @@ exittype	playstate;
 #define	MyInterrupt	0x60
 void interrupt (*intaddr)();
 void interrupt (*oldintaddr)();
-	char	*JHParmStrings[] = {"no386",nil};
+	id0_char_t	*JHParmStrings[] = {"no386",nil};
 
 void
 jabhack(void)
 {
-extern void far jabhack2(void);
-extern int far	CheckIs386(void);
+extern void id0_far jabhack2(void);
+extern id0_int_t id0_far	CheckIs386(void);
 
-	int	i;
+	id0_int_t	i;
 
 	oldintaddr = getvect(MyInterrupt);
 
@@ -134,13 +134,13 @@ void NewGame (void)
 ==================
 */
 
-boolean	SaveTheGame(int file)
+id0_boolean_t	SaveTheGame(id0_int_t file)
 {
-	word	i,compressed,expanded;
+	id0_word_t	i,compressed,expanded;
 	objtype	*o;
 	memptr	bigbuffer;
 
-	if (!CA_FarWrite(file,(void far *)&gamestate,sizeof(gamestate)))
+	if (!CA_FarWrite(file,(void id0_far *)&gamestate,sizeof(gamestate)))
 		return(false);
 
 	expanded = mapwidth * mapheight * 2;
@@ -149,14 +149,14 @@ boolean	SaveTheGame(int file)
 	for (i = 0;i < 3;i+=2)	// Write planes 0 and 2
 	{
 //
-// leave a word at start of compressed data for compressed length
+// leave a id0_word_t at start of compressed data for compressed length
 //
-		compressed = (unsigned)CA_RLEWCompress ((unsigned huge *)mapsegs[i]
-			,expanded,((unsigned huge *)bigbuffer)+1,RLETAG);
+		compressed = (id0_unsigned_t)CA_RLEWCompress ((id0_unsigned_t id0_huge *)mapsegs[i]
+			,expanded,((id0_unsigned_t id0_huge *)bigbuffer)+1,RLETAG);
 
-		*(unsigned huge *)bigbuffer = compressed;
+		*(id0_unsigned_t id0_huge *)bigbuffer = compressed;
 
-		if (!CA_FarWrite(file,(void far *)bigbuffer,compressed+2) )
+		if (!CA_FarWrite(file,(void id0_far *)bigbuffer,compressed+2) )
 		{
 			MM_FreePtr (&bigbuffer);
 			return(false);
@@ -164,7 +164,7 @@ boolean	SaveTheGame(int file)
 	}
 
 	for (o = player;o;o = o->next)
-		if (!CA_FarWrite(file,(void far *)o,sizeof(objtype)))
+		if (!CA_FarWrite(file,(void id0_far *)o,sizeof(objtype)))
 		{
 			MM_FreePtr (&bigbuffer);
 			return(false);
@@ -185,15 +185,15 @@ boolean	SaveTheGame(int file)
 ==================
 */
 
-boolean	LoadTheGame(int file)
+id0_boolean_t	LoadTheGame(id0_int_t file)
 {
-	unsigned	i,x,y;
+	id0_unsigned_t	i,x,y;
 	objtype		*obj,*prev,*next,*followed;
-	unsigned	compressed,expanded;
-	unsigned	far *map,tile;
+	id0_unsigned_t	compressed,expanded;
+	id0_unsigned_t	id0_far *map,tile;
 	memptr		bigbuffer;
 
-	if (!CA_FarRead(file,(void far *)&gamestate,sizeof(gamestate)))
+	if (!CA_FarRead(file,(void id0_far *)&gamestate,sizeof(gamestate)))
 		return(false);
 
 	SetupGameLevel ();		// load in and cache the base old level
@@ -203,20 +203,20 @@ boolean	LoadTheGame(int file)
 
 	for (i = 0;i < 3;i+=2)	// Read planes 0 and 2
 	{
-		if (!CA_FarRead(file,(void far *)&compressed,sizeof(compressed)) )
+		if (!CA_FarRead(file,(void id0_far *)&compressed,sizeof(compressed)) )
 		{
 			MM_FreePtr (&bigbuffer);
 			return(false);
 		}
 
-		if (!CA_FarRead(file,(void far *)bigbuffer,compressed) )
+		if (!CA_FarRead(file,(void id0_far *)bigbuffer,compressed) )
 		{
 			MM_FreePtr (&bigbuffer);
 			return(false);
 		}
 
-		CA_RLEWexpand ((unsigned huge *)bigbuffer,
-			(unsigned huge *)mapsegs[i],expanded,RLETAG);
+		CA_RLEWexpand ((id0_unsigned_t id0_huge *)bigbuffer,
+			(id0_unsigned_t id0_huge *)mapsegs[i],expanded,RLETAG);
 	}
 
 	MM_FreePtr (&bigbuffer);
@@ -235,7 +235,7 @@ boolean	LoadTheGame(int file)
 			{
 				tilemap[x][y] = tile;
 				if (tile>0)
-					(unsigned)actorat[x][y] = tile;
+					(id0_unsigned_t)actorat[x][y] = tile;
 			}
 		}
 
@@ -248,7 +248,7 @@ boolean	LoadTheGame(int file)
 	{
 		prev = new->prev;
 		next = new->next;
-		if (!CA_FarRead(file,(void far *)new,sizeof(objtype)))
+		if (!CA_FarRead(file,(void id0_far *)new,sizeof(objtype)))
 			return(false);
 		followed = new->next;
 		new->prev = prev;
@@ -325,9 +325,9 @@ void ShutdownId (void)
 
 void InitGame (void)
 {
-	unsigned	segstart,seglength;
-	int			i,x,y;
-	unsigned	*blockstart;
+	id0_unsigned_t	segstart,seglength;
+	id0_int_t			i,x,y;
+	id0_unsigned_t	*blockstart;
 
 //	US_TextScreen();
 
@@ -414,7 +414,7 @@ void InitGame (void)
 // initialize variables
 //
 	updateptr = &update[0];
-	*(unsigned *)(updateptr + UPDATEWIDE*PORTTILESHIGH) = UPDATETERMINATE;
+	*(id0_unsigned_t *)(updateptr + UPDATEWIDE*PORTTILESHIGH) = UPDATETERMINATE;
 	bufferofs = 0;
 	displayofs = 0;
 	VW_SetLineWidth(SCREENWIDTH);
@@ -432,16 +432,16 @@ void clrscr (void);		// can't include CONIO.H because of name conflicts...
 ==========================
 */
 
-void Quit (char *error)
+void Quit (id0_char_t *error)
 {
-	unsigned	finscreen;
+	id0_unsigned_t	finscreen;
 
 #if 0
 	if (!error)
 	{
 		CA_SetAllPurge ();
 		CA_CacheGrChunk (PIRACY);
-		finscreen = (unsigned)grsegs[PIRACY];
+		finscreen = (id0_unsigned_t)grsegs[PIRACY];
 	}
 #endif
 
@@ -490,11 +490,11 @@ void	TEDDeath(void)
 =====================
 */
 
-static	char *ParmStrings[] = {"easy","normal","hard",""};
+static	id0_char_t *ParmStrings[] = {"easy","normal","hard",""};
 
 void	DemoLoop (void)
 {
-	int	i,level;
+	id0_int_t	i,level;
 
 //
 // check for launch from ted
@@ -575,9 +575,9 @@ highscores:
 ==========================
 */
 
-void SetupScalePic (unsigned picnum)
+void SetupScalePic (id0_unsigned_t picnum)
 {
-	unsigned	scnum;
+	id0_unsigned_t	scnum;
 
 	scnum = picnum-FIRSTSCALEPIC;
 
@@ -604,11 +604,11 @@ void SetupScalePic (unsigned picnum)
 ==========================
 */
 
-void SetupScaleWall (unsigned picnum)
+void SetupScaleWall (id0_unsigned_t picnum)
 {
-	int		x,y;
-	unsigned	scnum;
-	byte	far *dest;
+	id0_int_t		x,y;
+	id0_unsigned_t	scnum;
+	id0_byte_t	id0_far *dest;
 
 	scnum = picnum-FIRSTWALLPIC;
 
@@ -621,7 +621,7 @@ void SetupScaleWall (unsigned picnum)
 	CA_CacheGrChunk (picnum);
 	DeplanePic (picnum);
 	MM_GetPtr(&walldirectory[scnum],64*64);
-	dest = (byte far *)walldirectory[scnum];
+	dest = (id0_byte_t id0_far *)walldirectory[scnum];
 	for (x=0;x<64;x++)
 		for (y=0;y<64;y++)
 			*dest++ = spotvis[y][x];
@@ -641,8 +641,8 @@ void SetupScaleWall (unsigned picnum)
 
 void SetupScaling (void)
 {
-	int		i,x,y;
-	byte	far *dest;
+	id0_int_t		i,x,y;
+	id0_byte_t	id0_far *dest;
 
 //
 // build the compiled scalers
@@ -653,7 +653,7 @@ void SetupScaling (void)
 
 //===========================================================================
 
-int	showscorebox;
+id0_int_t	showscorebox;
 
 void RF_FixOfs (void)
 {
@@ -676,14 +676,14 @@ void HelpScreens (void)
 
 void	CheckMemory(void)
 {
-	unsigned	finscreen;
+	id0_unsigned_t	finscreen;
 
 	if (mminfo.nearheap+mminfo.farheap+mminfo.EMSmem+mminfo.XMSmem
 		>= MINMEMORY)
 		return;
 
 	CA_CacheGrChunk (OUTOFMEM);
-	finscreen = (unsigned)grsegs[OUTOFMEM];
+	finscreen = (id0_unsigned_t)grsegs[OUTOFMEM];
 	ShutdownId ();
 	movedata (finscreen,7,0xb800,0,4000);
 	gotoxy (1,24);
@@ -703,7 +703,7 @@ void	CheckMemory(void)
 
 void main (void)
 {
-	short i;
+	//id0_short_t i;
 
 	if (stricmp(_argv[1], "/VER") == 0)
 	{

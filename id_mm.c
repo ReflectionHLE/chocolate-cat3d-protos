@@ -28,7 +28,7 @@ Primary coder: John Carmack
 
 RELIES ON
 ---------
-Quit (char *error) function
+Quit (id0_char_t *error) function
 
 
 WORK TO DO
@@ -65,10 +65,10 @@ EMS / XMS unmanaged routines
 
 typedef struct mmblockstruct
 {
-	unsigned	start,length;
-	unsigned	attributes;
+	id0_unsigned_t	start,length;
+	id0_unsigned_t	attributes;
 	memptr		*useptr;	// pointer to the segment start
-	struct mmblockstruct far *next;
+	struct mmblockstruct id0_far *next;
 } mmblocktype;
 
 
@@ -89,7 +89,7 @@ typedef struct mmblockstruct
 
 mminfotype	mminfo;
 memptr		bufferseg;
-boolean		mmerror;
+id0_boolean_t		mmerror;
 
 void		(* beforesort) (void);
 void		(* aftersort) (void);
@@ -102,21 +102,21 @@ void		(* aftersort) (void);
 =============================================================================
 */
 
-boolean		mmstarted;
+id0_boolean_t		mmstarted;
 
-void far	*farheap;
+void id0_far	*farheap;
 void		*nearheap;
 
-mmblocktype	far mmblocks[MAXBLOCKS]
-			,far *mmhead,far *mmfree,far *mmrover,far *mmnew;
+mmblocktype	id0_far mmblocks[MAXBLOCKS]
+			,id0_far *mmhead,id0_far *mmfree,id0_far *mmrover,id0_far *mmnew;
 
-boolean		bombonerror;
+id0_boolean_t		bombonerror;
 
-unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
+id0_unsigned_t	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
 
-void		(* XMSaddr) (void);		// far pointer to XMS driver
+void		(* XMSaddr) (void);		// id0_far pointer to XMS driver
 
-unsigned	numUMBs,UMBbase[MAXUMBS];
+id0_unsigned_t	numUMBs,UMBbase[MAXUMBS];
 
 //==========================================================================
 
@@ -124,12 +124,12 @@ unsigned	numUMBs,UMBbase[MAXUMBS];
 // local prototypes
 //
 
-boolean		MML_CheckForEMS (void);
+id0_boolean_t		MML_CheckForEMS (void);
 void 		MML_ShutdownEMS (void);
 void 		MM_MapEMS (void);
-boolean 	MML_CheckForXMS (void);
+id0_boolean_t 	MML_CheckForXMS (void);
 void 		MML_ShutdownXMS (void);
-void		MML_UseSpace (unsigned segstart, unsigned seglength);
+void		MML_UseSpace (id0_unsigned_t segstart, id0_unsigned_t seglength);
 void 		MML_ClearBlock (void);
 
 //==========================================================================
@@ -144,19 +144,19 @@ void 		MML_ClearBlock (void);
 =======================
 */
 
-char	emmname[9] = "EMMXXXX0";
+id0_char_t	emmname[9] = "EMMXXXX0";
 
-boolean MML_CheckForEMS (void)
+id0_boolean_t MML_CheckForEMS (void)
 {
 asm	mov	dx,OFFSET emmname[0]
 asm	mov	ax,0x3d00
-asm	int	0x21		// try to open EMMXXXX0 device
+asm	id0_int_t	0x21		// try to open EMMXXXX0 device
 asm	jc	error
 
 asm	mov	bx,ax
 asm	mov	ax,0x4400
 
-asm	int	0x21		// get device info
+asm	id0_int_t	0x21		// get device info
 asm	jc	error
 
 asm	and	dx,0x80
@@ -164,13 +164,13 @@ asm	jz	error
 
 asm	mov	ax,0x4407
 
-asm	int	0x21		// get status
+asm	id0_int_t	0x21		// get status
 asm	jc	error
 asm	or	al,al
 asm	jz	error
 
 asm	mov	ah,0x3e
-asm	int	0x21		// close handle
+asm	id0_int_t	0x21		// close handle
 asm	jc	error
 
 //
@@ -196,32 +196,32 @@ error:
 
 void MML_SetupEMS (void)
 {
-	char	str[80],str2[10];
-	unsigned	error;
+	id0_char_t	str[80],str2[10];
+	id0_unsigned_t	error;
 
 	totalEMSpages = freeEMSpages = EMSpageframe = EMSpagesmapped = 0;
 
 asm {
 	mov	ah,EMS_STATUS
-	int	EMS_INT						// make sure EMS hardware is present
+	id0_int_t	EMS_INT						// make sure EMS hardware is present
 	or	ah,ah
 	jnz	error
 
 	mov	ah,EMS_VERSION
-	int	EMS_INT
+	id0_int_t	EMS_INT
 	or	ah,ah
 	jnz	error
 	cmp	al,0x32						// only work on ems 3.2 or greater
 	jb	error
 
 	mov	ah,EMS_GETFRAME
-	int	EMS_INT						// find the page frame address
+	id0_int_t	EMS_INT						// find the page frame address
 	or	ah,ah
 	jnz	error
 	mov	[EMSpageframe],bx
 
 	mov	ah,EMS_GETPAGES
-	int	EMS_INT						// find out how much EMS is there
+	id0_int_t	EMS_INT						// find out how much EMS is there
 	or	ah,ah
 	jnz	error
 	mov	[totalEMSpages],dx
@@ -238,7 +238,7 @@ getpages:
 asm {
 	mov	[EMSpagesmapped],bx
 	mov	ah,EMS_ALLOCPAGES			// allocate up to 64k of EMS
-	int	EMS_INT
+	id0_int_t	EMS_INT
 	or	ah,ah
 	jnz	error
 	mov	[EMShandle],dx
@@ -273,7 +273,7 @@ void MML_ShutdownEMS (void)
 asm	{
 	mov	ah,EMS_FREEPAGES
 	mov	dx,[EMShandle]
-	int	EMS_INT
+	id0_int_t	EMS_INT
 	or	ah,ah
 	jz	ok
 	}
@@ -298,9 +298,9 @@ ok:
 
 void MM_MapEMS (void)
 {
-	char	str[80],str2[10];
-	unsigned	error;
-	int	i;
+	id0_char_t	str[80],str2[10];
+	id0_unsigned_t	error;
+	id0_int_t	i;
 
 	for (i=0;i<EMSpagesmapped;i++)
 	{
@@ -309,7 +309,7 @@ void MM_MapEMS (void)
 		mov	bx,[i]			// logical page
 		mov	al,bl			// physical page
 		mov	dx,[EMShandle]	// handle
-		int	EMS_INT
+		id0_int_t	EMS_INT
 		or	ah,ah
 		jnz	error
 		}
@@ -337,13 +337,13 @@ error:
 =======================
 */
 
-boolean MML_CheckForXMS (void)
+id0_boolean_t MML_CheckForXMS (void)
 {
 	numUMBs = 0;
 
 asm {
 	mov	ax,0x4300
-	int	0x2f				// query status of installed diver
+	id0_int_t	0x2f				// query status of installed diver
 	cmp	al,0x80
 	je	good
 	}
@@ -365,11 +365,11 @@ good:
 
 void MML_SetupXMS (void)
 {
-	unsigned	base,size;
+	id0_unsigned_t	base,size;
 
 asm	{
 	mov	ax,0x4310
-	int	0x2f
+	id0_int_t	0x2f
 	mov	[WORD PTR XMSaddr],bx
 	mov	[WORD PTR XMSaddr+2],es		// function pointer to XMS driver
 	}
@@ -417,8 +417,8 @@ done:;
 
 void MML_ShutdownXMS (void)
 {
-	int	i;
-	unsigned	base;
+	id0_int_t	i;
+	id0_unsigned_t	base;
 
 	for (i=0;i<numUMBs;i++)
 	{
@@ -438,17 +438,17 @@ asm	call	[DWORD PTR XMSaddr]
 = MML_UseSpace
 =
 = Marks a range of paragraphs as usable by the memory manager
-= This is used to mark space for the near heap, far heap, ems page frame,
+= This is used to mark space for the near heap, id0_far heap, ems page frame,
 = and upper memory blocks
 =
 ======================
 */
 
-void MML_UseSpace (unsigned segstart, unsigned seglength)
+void MML_UseSpace (id0_unsigned_t segstart, id0_unsigned_t seglength)
 {
-	mmblocktype far *scan,far *last;
-	unsigned	oldend;
-	long		extra;
+	mmblocktype id0_far *scan,id0_far *last;
+	id0_unsigned_t	oldend;
+	id0_long_t		extra;
 
 	scan = last = mmhead;
 	mmrover = mmhead;		// reset rover to start of memory
@@ -505,7 +505,7 @@ void MML_UseSpace (unsigned segstart, unsigned seglength)
 
 void MML_ClearBlock (void)
 {
-	mmblocktype far *scan,far *last;
+	mmblocktype id0_far *scan,id0_far *last;
 
 	scan = mmhead->next;
 
@@ -536,14 +536,14 @@ void MML_ClearBlock (void)
 ===================
 */
 
-static	char *ParmStrings[] = {"noems","noxms",""};
+static	id0_char_t *ParmStrings[] = {"noems","noxms",""};
 
 void MM_Startup (void)
 {
-	int i;
-	unsigned 	long length;
-	void far 	*start;
-	unsigned 	segstart,seglength,endfree;
+	id0_int_t i;
+	id0_unsigned_long_t 	length;
+	void id0_far 	*start;
+	id0_unsigned_t 	segstart,seglength,endfree;
 
 	if (mmstarted)
 		MM_Shutdown ();
@@ -576,7 +576,7 @@ void MM_Startup (void)
 // get all available near conventional memory segments
 //
 	length=coreleft();
-	start = (void far *)(nearheap = malloc(length));
+	start = (void id0_far *)(nearheap = malloc(length));
 
 	length -= 16-(FP_OFF(start)&15);
 	length -= SAVENEARHEAP;
@@ -586,7 +586,7 @@ void MM_Startup (void)
 	mminfo.nearheap = length;
 
 //
-// get all available far conventional memory segments
+// get all available id0_far conventional memory segments
 //
 	length=farcoreleft();
 	start = farheap = farmalloc(length);
@@ -675,12 +675,12 @@ void MM_Shutdown (void)
 ====================
 */
 
-void MM_GetPtr (memptr *baseptr,unsigned long size)
+void MM_GetPtr (memptr *baseptr, id0_unsigned_long_t size)
 {
-	mmblocktype far *scan,far *lastscan,far *endscan
-				,far *purge,far *next;
-	int			search;
-	unsigned	needed,startseg;
+	mmblocktype id0_far *scan,id0_far *lastscan,id0_far *endscan
+				,id0_far *purge,id0_far *next;
+	id0_int_t			search;
+	id0_unsigned_t	needed,startseg;
 
 	needed = (size+15)/16;		// convert size from bytes to paragraphs
 
@@ -731,7 +731,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			//
 				purge = lastscan->next;
 				lastscan->next = mmnew;
-				mmnew->start = *(unsigned *)baseptr = startseg;
+				mmnew->start = *(id0_unsigned_t *)baseptr = startseg;
 				mmnew->next = scan;
 				while ( purge != scan)
 				{	// free the purgable block
@@ -778,7 +778,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 
 void MM_FreePtr (memptr *baseptr)
 {
-	mmblocktype far *scan,far *last;
+	mmblocktype id0_far *scan,id0_far *last;
 
 	last = mmhead;
 	scan = last->next;
@@ -811,9 +811,9 @@ void MM_FreePtr (memptr *baseptr)
 =====================
 */
 
-void MM_SetPurge (memptr *baseptr, int purge)
+void MM_SetPurge (memptr *baseptr, id0_int_t purge)
 {
-	mmblocktype far *start;
+	mmblocktype id0_far *start;
 
 	start = mmrover;
 
@@ -847,9 +847,9 @@ void MM_SetPurge (memptr *baseptr, int purge)
 =====================
 */
 
-void MM_SetLock (memptr *baseptr, boolean locked)
+void MM_SetLock (memptr *baseptr, id0_boolean_t locked)
 {
-	mmblocktype far *start;
+	mmblocktype id0_far *start;
 
 	start = mmrover;
 
@@ -885,9 +885,9 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 
 void MM_SortMem (void)
 {
-	mmblocktype far *scan,far *last,far *next;
-	unsigned	start,length,source,dest,oldborder;
-	int			playing;
+	mmblocktype id0_far *scan,id0_far *last,id0_far *next;
+	id0_unsigned_t	start,length,source,dest,oldborder;
+	id0_int_t			playing;
 
 	//
 	// lock down a currently playing sound
@@ -961,7 +961,7 @@ void MM_SortMem (void)
 					movedata(source,0,dest,0,length*16);
 
 					scan->start = start;
-					*(unsigned *)scan->useptr = start;
+					*(id0_unsigned_t *)scan->useptr = start;
 				}
 				start = scan->start + scan->length;
 			}
@@ -995,10 +995,10 @@ void MM_SortMem (void)
 
 void MM_ShowMemory (void)
 {
-	mmblocktype far *scan;
-	unsigned color,temp;
-	long	end,owner;
-	char    scratch[80],str[10];
+	mmblocktype id0_far *scan;
+	id0_unsigned_t color,temp;
+	id0_long_t	end,owner;
+	id0_char_t    scratch[80],str[10];
 
 	VW_SetDefaultColors();
 	VW_SetLineWidth(40);
@@ -1023,17 +1023,17 @@ void MM_ShowMemory (void)
 		if (scan->start<=end)
 			Quit ("MM_ShowMemory: Memory block order currupted!");
 		end = scan->start+scan->length-1;
-		VW_Hlin(scan->start,(unsigned)end,0,color);
+		VW_Hlin(scan->start,(id0_unsigned_t)end,0,color);
 		VW_Plot(scan->start,0,15);
 		if (scan->next->start > end+1)
 			VW_Hlin(end+1,scan->next->start,0,0);	// black = free
 
 #if 0
 strcpy (scratch,"Size:");
-ltoa ((long)scan->length*16,str,10);
+ltoa ((id0_long_t)scan->length*16,str,10);
 strcat (scratch,str);
 strcat (scratch,"\tOwner:0x");
-owner = (unsigned)scan->useptr;
+owner = (id0_unsigned_t)scan->useptr;
 ultoa (owner,str,16);
 strcat (scratch,str);
 strcat (scratch,"\n");
@@ -1063,10 +1063,10 @@ write (debughandle,scratch,strlen(scratch));
 ======================
 */
 
-long MM_UnusedMemory (void)
+id0_long_t MM_UnusedMemory (void)
 {
-	unsigned free;
-	mmblocktype far *scan;
+	id0_unsigned_t free;
+	mmblocktype id0_far *scan;
 
 	free = 0;
 	scan = mmhead;
@@ -1093,10 +1093,10 @@ long MM_UnusedMemory (void)
 ======================
 */
 
-long MM_TotalFree (void)
+id0_long_t MM_TotalFree (void)
 {
-	unsigned free;
-	mmblocktype far *scan;
+	id0_unsigned_t free;
+	mmblocktype id0_far *scan;
 
 	free = 0;
 	scan = mmhead;
@@ -1122,7 +1122,7 @@ long MM_TotalFree (void)
 =====================
 */
 
-void MM_BombOnError (boolean bomb)
+void MM_BombOnError (id0_boolean_t bomb)
 {
 	bombonerror = bomb;
 }

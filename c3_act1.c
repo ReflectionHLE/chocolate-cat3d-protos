@@ -18,7 +18,7 @@
 
 // C3_PLAY.C
 
-#include "c3_def.h"
+#include "C3_DEF.H"
 #pragma hdrstop
 
 /*

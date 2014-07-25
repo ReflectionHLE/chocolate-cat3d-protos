@@ -41,33 +41,33 @@
 */
 
 ControlInfo	c;
-boolean		running,slowturn;
+id0_boolean_t		running,slowturn;
 
-int			bordertime;
+id0_int_t			bordertime;
 objtype objlist[MAXACTORS],*new,*obj,*player,*lastobj,*objfreelist;
 
-unsigned	farmapylookup[MAPSIZE];
-byte		*nearmapylookup[MAPSIZE];
+id0_unsigned_t	farmapylookup[MAPSIZE];
+id0_byte_t		*nearmapylookup[MAPSIZE];
 
-boolean		singlestep,godmode;
-int			extravbls;
+id0_boolean_t		singlestep,godmode;
+id0_int_t			extravbls;
 
 //
 // replacing refresh manager
 //
-unsigned	mapwidth,mapheight,tics;
-boolean		compatability;
-byte		*updateptr;
-unsigned	mapwidthtable[64];
-unsigned	uwidthtable[UPDATEHIGH];
-unsigned	blockstarts[UPDATEWIDE*UPDATEHIGH];
+id0_unsigned_t	mapwidth,mapheight,tics;
+id0_boolean_t		compatability;
+id0_byte_t		*updateptr;
+id0_unsigned_t	mapwidthtable[64];
+id0_unsigned_t	uwidthtable[UPDATEHIGH];
+id0_unsigned_t	blockstarts[UPDATEWIDE*UPDATEHIGH];
 #define	UPDATESCREENSIZE	(UPDATEWIDE*PORTTILESHIGH+2)
 #define	UPDATESPARESIZE		(UPDATEWIDE*2+4)
 #define UPDATESIZE			(UPDATESCREENSIZE+2*UPDATESPARESIZE)
-byte		update[UPDATESIZE];
+id0_byte_t		update[UPDATESIZE];
 
-int		mousexmove,mouseymove;
-int		pointcount,pointsleft;
+id0_int_t		mousexmove,mouseymove;
+id0_int_t		pointcount,pointsleft;
 
 /*
 =============================================================================
@@ -82,16 +82,16 @@ void DrawPlayScreen (void);
 
 
 //
-// near data map array (wall values only, get text number from far data)
+// near data map array (wall values only, get text number from id0_far data)
 //
-byte		tilemap[MAPSIZE][MAPSIZE];
-byte		spotvis[MAPSIZE][MAPSIZE];
+id0_byte_t		tilemap[MAPSIZE][MAPSIZE];
+id0_byte_t		spotvis[MAPSIZE][MAPSIZE];
 objtype		*actorat[MAPSIZE][MAPSIZE];
 
 objtype dummyobj;
 
-int bordertime;
-int	objectcount;
+id0_int_t bordertime;
+id0_int_t	objectcount;
 
 void StopMusic(void);
 void StartMusic(void);
@@ -109,7 +109,7 @@ void StartMusic(void);
 #define MAXX	264
 #define MAXY	146
 
-void	CenterWindow(word w,word h)
+void	CenterWindow(id0_word_t w,id0_word_t h)
 {
 	US_DrawWindow(((MAXX / 8) - w) / 2,((MAXY / 8) - h) / 2,w,h);
 }
@@ -224,7 +224,7 @@ next element.
 
 void InitObjList (void)
 {
-	int	i;
+	id0_int_t	i;
 
 	for (i=0;i<MAXACTORS;i++)
 	{
@@ -262,7 +262,7 @@ void InitObjList (void)
 =========================
 */
 
-void GetNewObj (boolean usedummy)
+void GetNewObj (id0_boolean_t usedummy)
 {
 	if (!objfreelist)
 	{
@@ -340,7 +340,7 @@ void RemoveObj (objtype *gone)
 
 void PollControls (void)
 {
-	unsigned buttons;
+	id0_unsigned_t buttons;
 
 	IN_ReadControl(0,&c);
 
@@ -395,7 +395,7 @@ void PollControls (void)
 
 void StopMusic(void)
 {
-	int	i;
+	id0_int_t	i;
 
 	SD_MusicOff();
 	for (i = 0;i < LASTMUSIC;i++)
@@ -435,7 +435,7 @@ void StartMusic(void)
 	else
 	{
 		MM_SetLock(&((memptr)audiosegs[STARTMUSIC + chunk]),true);
-		SD_StartMusic((MusicGroup far *)audiosegs[STARTMUSIC + chunk]);
+		SD_StartMusic((MusicGroup id0_far *)audiosegs[STARTMUSIC + chunk]);
 	}
 }
 
@@ -452,7 +452,7 @@ void StartMusic(void)
 
 void PlayLoop (void)
 {
-	int		give;
+	id0_int_t		give;
 
 	void (*think)();
 

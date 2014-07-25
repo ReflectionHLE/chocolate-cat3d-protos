@@ -52,36 +52,36 @@
 
 
 //      Special imports
-extern  boolean         showscorebox;
+extern  id0_boolean_t         showscorebox;
 #ifdef  KEEN
-extern  boolean         oldshooting;
+extern  id0_boolean_t         oldshooting;
 extern  ScanCode        firescan;
 #else
 		ScanCode        firescan;
 #endif
 
 //      Global variables
-		char            *abortprogram;
-		boolean         NoWait,
+		id0_char_t            *abortprogram;
+		id0_boolean_t         NoWait,
 					HighScoresDirty;
-		word            PrintX,PrintY;
-		word            WindowX,WindowY,WindowW,WindowH;
+		id0_word_t            PrintX,PrintY;
+		id0_word_t            WindowX,WindowY,WindowW,WindowH;
 
 //      Internal variables
 #define ConfigVersion   1
 
-static  char            *ParmStrings[] = {"TEDLEVEL","NOWAIT"},
+static  id0_char_t            *ParmStrings[] = {"TEDLEVEL","NOWAIT"},
 					*ParmStrings2[] = {"COMP","NOCOMP"};
-static  boolean         US_Started;
+static  id0_boolean_t         US_Started;
 
-		boolean         Button0,Button1,
+		id0_boolean_t         Button0,Button1,
 					CursorBad;
-		int                     CursorX,CursorY;
+		id0_int_t                     CursorX,CursorY;
 
-		void            (*USL_MeasureString)(char far *,word *,word *) = VW_MeasurePropString,
-					(*USL_DrawString)(char far *) = VWB_DrawPropString;
+		void            (*USL_MeasureString)(id0_char_t id0_far *,id0_word_t *,id0_word_t *) = VW_MeasurePropString,
+					(*USL_DrawString)(id0_char_t id0_far *) = VWB_DrawPropString;
 
-		boolean         (*USL_SaveGame)(int),(*USL_LoadGame)(int);
+		id0_boolean_t         (*USL_SaveGame)(id0_int_t),(*USL_LoadGame)(id0_int_t);
 		void            (*USL_ResetGame)(void);
 		SaveGame        Games[MaxSaveGames];
 		HighScore       Scores[MaxScores] =
@@ -107,18 +107,18 @@ static  boolean         US_Started;
 ///////////////////////////////////////////////////////////////////////////
 #pragma warn    -par
 #pragma warn    -rch
-int
-USL_HardError(word errval,int ax,int bp,int si)
+id0_int_t
+USL_HardError(id0_word_t errval,id0_int_t ax,id0_int_t bp,id0_int_t si)
 {
 #define IGNORE  0
 #define RETRY   1
 #define ABORT   2
 extern  void    ShutdownId(void);
 
-static  char            buf[32];
+static  id0_char_t            buf[32];
 static  WindowRec       wr;
-		int                     di;
-		char            c,*s,*t;
+		id0_int_t                     di;
+		id0_char_t            c,*s,*t;
 
 
 	di = _DI;
@@ -195,10 +195,10 @@ oh_kill_me:
 //              the filename to use for the specified save game
 //
 ///////////////////////////////////////////////////////////////////////////
-char *
-USL_GiveSaveName(word game)
+id0_char_t *
+USL_GiveSaveName(id0_word_t game)
 {
-static  char    name[] = "SAVEGAMx."EXTENSION;
+static  id0_char_t    name[] = "SAVEGAMx."EXTENSION;
 
 	name[7] = '0' + game;
 	return(name);
@@ -211,7 +211,7 @@ static  char    name[] = "SAVEGAMx."EXTENSION;
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_SetLoadSaveHooks(boolean (*load)(int),boolean (*save)(int),void (*reset)(void))
+US_SetLoadSaveHooks(id0_boolean_t (*load)(id0_int_t),id0_boolean_t (*save)(id0_int_t),void (*reset)(void))
 {
 	USL_LoadGame = load;
 	USL_SaveGame = save;
@@ -228,9 +228,9 @@ US_SetLoadSaveHooks(boolean (*load)(int),boolean (*save)(int),void (*reset)(void
 static void
 USL_ReadConfig(void)
 {
-	boolean         gotit;
-	char            sig[sizeof(EXTENSION)];
-	word            version;
+	id0_boolean_t         gotit;
+	id0_char_t            sig[sizeof(EXTENSION)];
+	id0_word_t            version;
 	int                     file;
 	SDMode          sd;
 	SMMode          sm;
@@ -289,7 +289,7 @@ rcfailed:
 static void
 USL_WriteConfig(void)
 {
-	word    version;
+	id0_word_t    version;
 	int             file;
 
 	version = ConfigVersion;
@@ -329,9 +329,9 @@ USL_WriteConfig(void)
 static void
 USL_CheckSavedGames(void)
 {
-	boolean         ok;
-	char            *filename;
-	word            i;
+	id0_boolean_t         ok;
+	id0_char_t            *filename;
+	id0_word_t            i;
 	int                     file;
 	SaveGame        *game;
 
@@ -374,7 +374,7 @@ USL_CheckSavedGames(void)
 void
 US_Startup(void)
 {
-	int     i;
+	id0_int_t     i;
 
 	if (US_Started)
 		return;
@@ -437,12 +437,12 @@ US_Shutdown(void)
 //              index of the string that matched, or -1 if no matches were found
 //
 ///////////////////////////////////////////////////////////////////////////
-int
-US_CheckParm(char *parm,char **strings)
+id0_int_t
+US_CheckParm(id0_char_t *parm,id0_char_t **strings)
 {
-	char    cp,cs,
+	id0_char_t    cp,cs,
 			*p,*s;
-	int             i;
+	id0_int_t             i;
 
 	while (!isalpha(*parm)) // Skip non-alphas
 		parm++;
@@ -472,9 +472,9 @@ US_CheckParm(char *parm,char **strings)
 //
 ///////////////////////////////////////////////////////////////////////////
 static void
-USL_ScreenDraw(word x,word y,char *s,byte attr)
+USL_ScreenDraw(id0_word_t x,id0_word_t y,id0_char_t *s,id0_byte_t attr)
 {
-	byte    far *screen,far *oscreen;
+	id0_byte_t    id0_far *screen,id0_far *oscreen;
 
 	screen = MK_FP(0xb800,(x * 2) + (y * 80 * 2));
 	oscreen = (&introscn + 7) + ((x - 1) * 2) + (y * 80 * 2) + 1;
@@ -524,7 +524,7 @@ USL_ClearTextScreen(void)
 void
 US_TextScreen(void)
 {
-	word    i,n;
+	id0_word_t    i,n;
 
 	USL_ClearTextScreen();
 
@@ -560,13 +560,13 @@ US_TextScreen(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 static void
-USL_Show(word x,word y,word w,boolean show,boolean hilight)
+USL_Show(id0_word_t x,id0_word_t y,id0_word_t w,id0_boolean_t show,id0_boolean_t hilight)
 {
-	byte    far *screen,far *oscreen;
+	id0_byte_t    id0_far *screen,id0_far *oscreen;
 
 	screen = MK_FP(0xb800,((x - 1) * 2) + (y * 80 * 2));
 	oscreen = (&introscn + 7) + ((x - 1) * 2) + (y * 80 * 2) - 1;
-	*screen++ = show? 251 : ' ';    // Checkmark char or space
+	*screen++ = show? 251 : ' ';    // Checkmark id0_char_t or space
 //      *screen = 0x48;
 //      *screen = (*oscreen & 0xf0) | 8;
 	oscreen += 2;
@@ -579,15 +579,15 @@ USL_Show(word x,word y,word w,boolean show,boolean hilight)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      USL_ShowMem() - Right justifies a longword in one of the memory fields on
+//      USL_ShowMem() - Right justifies a id0_longword_t in one of the memory fields on
 //              the text screen
 //
 ///////////////////////////////////////////////////////////////////////////
 static void
-USL_ShowMem(word x,word y,long mem)
+USL_ShowMem(id0_word_t x,id0_word_t y,id0_long_t mem)
 {
-	char    buf[16];
-	word    i;
+	id0_char_t    buf[16];
+	id0_word_t    i;
 
 	for (i = strlen(ltoa(mem,buf,10));i < 5;i++)
 		USL_ScreenDraw(x++,y," ",0xff);
@@ -603,8 +603,8 @@ USL_ShowMem(word x,word y,long mem)
 void
 US_UpdateTextScreen(void)
 {
-	boolean         b;
-	longword        totalmem;
+	id0_boolean_t         b;
+	id0_longword_t        totalmem;
 
 	// Show video card info
 	b = (grmode == CGAGR);
@@ -628,8 +628,8 @@ US_UpdateTextScreen(void)
 	USL_Show(21,15,14,AdLibPresent,b);
 	if (b && AdLibPresent)  // Hack because of two lines
 	{
-		byte    far *screen,far *oscreen;
-		word    x,y,w;
+		id0_byte_t    id0_far *screen,id0_far *oscreen;
+		id0_word_t    x,y,w;
 
 		x = 21;
 		y = 16;
@@ -666,9 +666,9 @@ US_UpdateTextScreen(void)
 void
 US_FinishTextScreen(void)
 {
-static  byte    colors[] = {4,6,13,15,15,15,15,15,15};
-		boolean up;
-		int             i,c;
+static  id0_byte_t    colors[] = {4,6,13,15,15,15,15,15,15};
+		id0_boolean_t up;
+		id0_int_t             i,c;
 
 	// Change Loading... to Press a Key
 
@@ -709,7 +709,7 @@ static  byte    colors[] = {4,6,13,15,15,15,15,15,15};
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char far *))
+US_SetPrintRoutines(void (*measure)(id0_char_t id0_far *,id0_word_t *,id0_word_t *),void (*print)(id0_char_t id0_far *))
 {
 	USL_MeasureString = measure;
 	USL_DrawString = print;
@@ -722,10 +722,10 @@ US_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_Print(char *s)
+US_Print(id0_char_t *s)
 {
-	char    c,*se;
-	word    w,h;
+	id0_char_t    c,*se;
+	id0_word_t    w,h;
 
 	while (*s)
 	{
@@ -755,26 +755,26 @@ US_Print(char *s)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_PrintUnsigned() - Prints an unsigned long
+//      US_PrintUnsigned() - Prints an id0_unsigned_t id0_long_t
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_PrintUnsigned(longword n)
+US_PrintUnsigned(id0_longword_t n)
 {
-	char    buffer[32];
+	id0_char_t    buffer[32];
 
 	US_Print(ultoa(n,buffer,10));
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_PrintSigned() - Prints a signed long
+//      US_PrintSigned() - Prints a signed id0_long_t
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_PrintSigned(long n)
+US_PrintSigned(id0_long_t n)
 {
-	char    buffer[32];
+	id0_char_t    buffer[32];
 
 	US_Print(ltoa(n,buffer,10));
 }
@@ -785,9 +785,9 @@ US_PrintSigned(long n)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-USL_PrintInCenter(char *s,Rect r)
+USL_PrintInCenter(id0_char_t *s,Rect r)
 {
-	word    w,h,
+	id0_word_t    w,h,
 			rw,rh;
 
 	USL_MeasureString(s,&w,&h);
@@ -805,7 +805,7 @@ USL_PrintInCenter(char *s,Rect r)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_PrintCentered(char *s)
+US_PrintCentered(id0_char_t *s)
 {
 	Rect    r;
 
@@ -824,9 +824,9 @@ US_PrintCentered(char *s)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_CPrintLine(char *s)
+US_CPrintLine(id0_char_t *s)
 {
-	word    w,h;
+	id0_word_t    w,h;
 
 	USL_MeasureString(s,&w,&h);
 
@@ -845,9 +845,9 @@ US_CPrintLine(char *s)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_CPrint(char *s)
+US_CPrint(id0_char_t *s)
 {
-	char    c,*se;
+	id0_char_t    c,*se;
 
 	while (*s)
 	{
@@ -887,9 +887,9 @@ US_ClearWindow(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_DrawWindow(word x,word y,word w,word h)
+US_DrawWindow(id0_word_t x,id0_word_t y,id0_word_t w,id0_word_t h)
 {
-	word    i,
+	id0_word_t    i,
 			sx,sy,sw,sh;
 
 	WindowX = x * 8;
@@ -923,7 +923,7 @@ US_DrawWindow(word x,word y,word w,word h)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_CenterWindow(word w,word h)
+US_CenterWindow(id0_word_t w,id0_word_t h)
 {
 	US_DrawWindow(((MaxX / 8) - w) / 2,((MaxY / 8) - h) / 2,w,h);
 }
@@ -935,9 +935,9 @@ US_CenterWindow(word w,word h)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_CenterSaveWindow(word w,word h,memptr *save)
+US_CenterSaveWindow(id0_word_t w,id0_word_t h,memptr *save)
 {
-	word    x,y,
+	id0_word_t    x,y,
 			screen;
 
 	x = ((MaxX / 8) - w) / 2;
@@ -957,7 +957,7 @@ US_CenterSaveWindow(word w,word h,memptr *save)
 void
 US_RestoreSaveWindow(memptr *save)
 {
-	word    screen;
+	id0_word_t    screen;
 
 	screen = bufferofs + panadjust + ylookup[WindowY] + (WindowX * CHARWIDTH);
 	VW_MemToScreen(*save,screen,WindowW * CHARWIDTH,WindowH);
@@ -1039,7 +1039,7 @@ US_ShutCursor(void)
 //              the Input Mgr and tells the View Mgr where the cursor is
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
+id0_boolean_t
 US_UpdateCursor(void)
 {
 	CursorInfo      info;
@@ -1076,10 +1076,10 @@ US_UpdateCursor(void)
 //
 ///////////////////////////////////////////////////////////////////////////
 static void
-USL_XORICursor(int x,int y,char *s,word cursor)
+USL_XORICursor(id0_int_t x,id0_int_t y,id0_char_t *s,id0_word_t cursor)
 {
-	char    buf[MaxString];
-	word    w,h;
+	id0_char_t    buf[MaxString];
+	id0_word_t    w,h;
 
 	strcpy(buf,s);
 	buf[cursor] = '\0';
@@ -1100,21 +1100,21 @@ USL_XORICursor(int x,int y,char *s,word cursor)
 //              returned
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
-US_LineInput(int x,int y,char *buf,char *def,boolean escok,
-				int maxchars,int maxwidth)
+id0_boolean_t
+US_LineInput(id0_int_t x,id0_int_t y,id0_char_t *buf,id0_char_t *def,id0_boolean_t escok,
+				id0_int_t maxchars,id0_int_t maxwidth)
 {
-	boolean         redraw,
+	id0_boolean_t         redraw,
 				cursorvis,cursormoved,
 				done,result;
 	ScanCode        sc;
-	char            c,
+	id0_char_t            c,
 				s[MaxString],olds[MaxString];
-	word            i,
+	id0_word_t            i,
 				cursor,
 				w,h,
 				len;
-	longword        lasttime;
+	id0_longword_t        lasttime;
 
 	VW_HideCursor();
 

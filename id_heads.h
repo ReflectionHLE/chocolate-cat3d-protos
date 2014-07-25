@@ -50,9 +50,10 @@ typedef	bool id0_boolean_t;
 typedef int8_t id0_char_t;
 typedef int8_t id0_signed_char_t;
 typedef uint8_t id0_unsigned_char_t;
-typedef int16_t id0_short_t;
+//typedef int16_t id0_short_t; // only found with an unused variable (c3_main.c)
 typedef int16_t id0_int_t;
-typedef uint16_t id0_unsigned_t; // 16-bit unsigned int
+typedef uint16_t id0_unsigned_t;
+typedef int32_t id0_long_t;
 typedef uint32_t id0_unsigned_long_t;
 
 typedef uint8_t id0_byte_t;
@@ -60,6 +61,14 @@ typedef uint16_t id0_word_t;
 typedef uint32_t id0_longword_t;
 // Possibly unused in any of the 3D Catacomb games (as released by FlatRockSoft)
 //typedef uint8_t * id0_ptr_t;		Ptr;
+
+// TODO (CHOCO CAT3D):
+// Any better alternative? (Used only in c3_draw.c:BuildTables())
+typedef float id0_float_t;
+typedef double id0_double_t;
+
+// Used in place of MAXINT in c3_draw.c (which defines ID0_MININT separately)
+#define ID0_MAXINT 32767
 
 typedef	struct
 		{
@@ -75,6 +84,7 @@ typedef	struct
 // TODO (CHOCO CAT3D): These should really be removed, but just in case...
 #define id0_far
 #define id0_huge
+#define id0_seg
 
 #endif
 

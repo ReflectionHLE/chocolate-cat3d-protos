@@ -60,7 +60,7 @@
 #define GOALLUMP                21
 
 
-int     lumpstart[NUMLUMPS] = {
+id0_int_t     lumpstart[NUMLUMPS] = {
 CONTROLS_LUMP_START,
 ORC_LUMP_START,
 TROLL_LUMP_START,
@@ -86,7 +86,7 @@ NEMESISPIC
 };
 
 
-int     lumpend[NUMLUMPS] = {
+id0_int_t     lumpend[NUMLUMPS] = {
 CONTROLS_LUMP_END,
 ORC_LUMP_END,
 TROLL_LUMP_END,
@@ -121,9 +121,9 @@ NEMESISPIC
 =============================================================================
 */
 
-unsigned        latchpics[NUMLATCHPICS];
-unsigned        tileoffsets[NUMTILE16];
-unsigned        textstarts[27];
+id0_unsigned_t        latchpics[NUMLATCHPICS];
+id0_unsigned_t        tileoffsets[NUMTILE16];
+id0_unsigned_t        textstarts[27];
 
 /*
 =============================================================================
@@ -133,7 +133,7 @@ unsigned        textstarts[27];
 =============================================================================
 */
 
-boolean lumpneeded[NUMLUMPS];
+id0_boolean_t lumpneeded[NUMLUMPS];
 
 
 //===========================================================================
@@ -151,9 +151,9 @@ boolean lumpneeded[NUMLUMPS];
 
 void ScanInfoPlane (void)
 {
-	unsigned        x,y,i,j;
-	int                     tile;
-	unsigned        far     *start;
+	id0_unsigned_t        x,y,i,j;
+	id0_int_t                     tile;
+	id0_unsigned_t        id0_far     *start;
 
 	InitObjList();                  // start spawning things with a clean slate
 
@@ -307,10 +307,10 @@ void ScanInfoPlane (void)
 
 void ScanText (void)
 {
-	int     i;
-	char far *text;
+	id0_int_t     i;
+	id0_char_t id0_far *text;
 
-	text = (char _seg *)grsegs[LEVEL1TEXT+mapon];
+	text = (id0_char_t id0_seg *)grsegs[LEVEL1TEXT+mapon];
 
 	textstarts[0] = 0;
 
@@ -338,7 +338,7 @@ void ScanText (void)
 ==================
 */
 
-static  char    *levelnames[] =
+static  id0_char_t    *levelnames[] =
 				{
 					"The Approach",
 					"Nemesis's Keep",
@@ -363,7 +363,7 @@ static  char    *levelnames[] =
 				};
 void DrawEnterScreen (void)
 {
-	int     x,y;
+	id0_int_t     x,y;
 
 	VW_Bar(0,0,VIEWWIDTH,VIEWHEIGHT,9);     // Medium blue
 
@@ -379,7 +379,7 @@ void DrawEnterScreen (void)
 
 //==========================================================================
 
-boolean tileneeded[NUMFLOORS];
+id0_boolean_t tileneeded[NUMFLOORS];
 
 
 /*
@@ -392,8 +392,8 @@ boolean tileneeded[NUMFLOORS];
 
 void CacheScaleds (void)
 {
-	int     i,j;
-	unsigned        source,dest;
+	id0_int_t     i,j;
+	id0_unsigned_t        source,dest;
 
 	FreeUpMemory ();
 	CA_CacheGrChunk(LEVEL1TEXT+mapon);
@@ -454,8 +454,8 @@ void CacheScaleds (void)
 
 void SetupGameLevel (void)
 {
-	int     x,y,i;
-	unsigned        far *map,tile,spot;
+	id0_int_t     x,y,i;
+	id0_unsigned_t        id0_far *map,tile,spot;
 
 	memset (tileneeded,0,sizeof(tileneeded));
 //
@@ -508,7 +508,7 @@ void SetupGameLevel (void)
 				}
 
 				if (tile>0)
-					(unsigned)actorat[x][y] = tile;
+					(id0_unsigned_t)actorat[x][y] = tile;
 			}
 		}
 
@@ -537,9 +537,9 @@ void SetupGameLevel (void)
 =====================
 */
 
-void LatchDrawPic (unsigned x, unsigned y, unsigned picnum)
+void LatchDrawPic (id0_unsigned_t x, id0_unsigned_t y, id0_unsigned_t picnum)
 {
-	unsigned wide, height, source, dest;
+	id0_unsigned_t wide, height, source, dest;
 
 	wide = pictable[picnum-STARTPICS].width;
 	height = pictable[picnum-STARTPICS].height;
@@ -622,7 +622,7 @@ void Victory (void)
 
 void Died (void)
 {
-	unsigned page1,page2;
+	id0_unsigned_t page1,page2;
 //
 // fizzle fade screen to grey
 //
@@ -668,7 +668,7 @@ void NormalScreen (void)
 
 void DrawPlayScreen (void)
 {
-	int     i,j,p,m;
+	id0_int_t     i,j,p,m;
 
 	screenpage = 0;
 
@@ -718,9 +718,9 @@ void DrawPlayScreen (void)
 
 void LoadLatchMem (void)
 {
-	int     i,j,p,m;
-	byte    far *src, far *dest;
-	unsigned        destoff;
+	id0_int_t     i,j,p,m;
+	id0_byte_t    id0_far *src, id0_far *dest;
+	id0_unsigned_t        destoff;
 
 	EGAWRITEMODE(0);
 
@@ -732,7 +732,7 @@ void LoadLatchMem (void)
 // tile 8s
 //
 	latchpics[0] = freelatch;
-	src = (byte _seg *)grsegs[STARTTILE8];
+	src = (id0_byte_t id0_seg *)grsegs[STARTTILE8];
 	dest = MK_FP(0xa000,freelatch);
 
 	for (i=0;i<NUMTILE8;i++)
@@ -753,12 +753,12 @@ void LoadLatchMem (void)
 //
 // tile 16s
 //
-	src = (byte _seg *)grsegs[STARTTILE16];
+	src = (id0_byte_t id0_seg *)grsegs[STARTTILE16];
 
 	for (i=0;i<NUMTILE16;i++)
 	{
 		CA_CacheGrChunk (STARTTILE16+i);
-		src = (byte _seg *)grsegs[STARTTILE16+i];
+		src = (id0_byte_t id0_seg *)grsegs[STARTTILE16+i];
 		if (src)
 		{
 			tileoffsets[i] = FP_OFF(dest);
@@ -811,13 +811,13 @@ void LoadLatchMem (void)
 
 #define PIXPERFRAME     1600
 
-void FizzleFade (unsigned source, unsigned dest,
-	unsigned width,unsigned height, boolean abortable)
+void FizzleFade (id0_unsigned_t source, id0_unsigned_t dest,
+	id0_unsigned_t width,id0_unsigned_t height, id0_boolean_t abortable)
 {
-	unsigned        drawofs,pagedelta;
-	unsigned        char maskb[8] = {1,2,4,8,16,32,64,128};
-	unsigned        x,y,p,frame;
-	long            rndval;
+	id0_unsigned_t        drawofs,pagedelta;
+	id0_unsigned_char_t maskb[8] = {1,2,4,8,16,32,64,128};
+	id0_unsigned_t        x,y,p,frame;
+	id0_long_t            rndval;
 
 	pagedelta = dest-source;
 	VW_SetScreen (dest,0);
@@ -966,9 +966,9 @@ noxor:
 ===================
 */
 
-void FizzleOut (int showlevel)
+void FizzleOut (id0_int_t showlevel)
 {
-	unsigned page1,page2;
+	id0_unsigned_t page1,page2;
 //
 // fizzle fade screen to grey
 //
@@ -990,7 +990,7 @@ void FizzleOut (int showlevel)
 
 void FreeUpMemory (void)
 {
-	int     i;
+	id0_int_t     i;
 
 	for (i=0;i<NUMSCALEPICS;i++)
 		if (shapedirectory[i])
@@ -1013,8 +1013,8 @@ void FreeUpMemory (void)
 
 void    DrawHighScores(void)
 {
-	char            buffer[16],*str;
-	word            i,j,
+	id0_char_t            buffer[16],*str;
+	id0_word_t            i,j,
 				w,h,
 				x,y;
 	HighScore       *s;
@@ -1069,10 +1069,10 @@ void    DrawHighScores(void)
 =======================
 */
 
-void    CheckHighScore (long score,word other)
+void    CheckHighScore (id0_long_t score,id0_word_t other)
 {
-	word            i,j;
-	int                     n;
+	id0_word_t            i,j;
+	id0_int_t                     n;
 	HighScore       myscore;
 
 	strcpy(myscore.name,"");
@@ -1124,8 +1124,8 @@ void    CheckHighScore (long score,word other)
 
 void GameLoop (void)
 {
-	int i,xl,yl,xh,yh;
-	char num[20];
+	id0_int_t i,xl,yl,xh,yh;
+	id0_char_t num[20];
 #ifdef PROFILE
 	clock_t start,end;
 #endif

@@ -18,7 +18,7 @@
 
 // C3_DEBUG.C
 
-#include "c3_def.h"
+#include "C3_DEF.H"
 #pragma hdrstop
 
 /*
@@ -73,7 +73,7 @@ void DebugMemory (void)
 	id0_int_t	i;
 	id0_char_t    scratch[80],str[10];
 	id0_long_t	mem;
-	spritetype _seg	*block;
+	spritetype id0_seg	*block;
 
 	VW_FixRefreshBuffer ();
 	US_CenterWindow (16,7);

@@ -56,7 +56,7 @@
 =============================================================================
 */
 
-boolean	aborttrace;
+id0_boolean_t	aborttrace;
 
 /*
 =============================================================================
@@ -66,13 +66,13 @@ boolean	aborttrace;
 =============================================================================
 */
 
-unsigned	wallvisable,voffset;
+id0_unsigned_t	wallvisable,voffset;
 
 
 fixed edgex,edgey;
 
-int wallon;
-int basecolor;
+id0_int_t wallon;
+id0_int_t basecolor;
 
 walltype *oldwall;
 
@@ -91,14 +91,14 @@ fixed point2y[4] = {0     ,0	   ,GLOBAL1 ,GLOBAL1};
 // offset from tile.x,tile.y of the tile that shares wallon side
 // (side is not visable if it is shared)
 //
-int sharex[4] = { 0, 1, 0,-1};
-int sharey[4] = {-1, 0, 1, 0};
+id0_int_t sharex[4] = { 0, 1, 0,-1};
+id0_int_t sharey[4] = {-1, 0, 1, 0};
 
 //
 // amount to move tile.x,tile.y to follow wallon to another tile
 //
-int followx[4] = {-1, 0, 1, 0};
-int followy[4] = { 0,-1, 0, 1};
+id0_int_t followx[4] = {-1, 0, 1, 0};
+id0_int_t followy[4] = { 0,-1, 0, 1};
 
 //
 // cornerwall gives the wall on the same tile to start following when the
@@ -106,8 +106,8 @@ int followy[4] = { 0,-1, 0, 1};
 // turnwall gives the wall on tile.x+sharex,tile.y+sharey to start following
 // when the wall hits another tile (right angle corner)
 //
-int cornerwall[4] = {WEST,NORTH,EAST,SOUTH};
-int turnwall[4] = {EAST,SOUTH,WEST,NORTH};
+id0_int_t cornerwall[4] = {WEST,NORTH,EAST,SOUTH};
+id0_int_t turnwall[4] = {EAST,SOUTH,WEST,NORTH};
 
 //
 // wall visabilities in reletive locations
@@ -115,18 +115,18 @@ int turnwall[4] = {EAST,SOUTH,WEST,NORTH};
 // -,0 0,0 +,0
 // -,+ 0,+ +,+
 //
-int visable[9][4] =
+id0_int_t visable[9][4] =
 {
  {0,1,1,0}, {0,0,1,0}, {0,0,1,1},
  {0,1,0,0}, {0,0,0,0}, {0,0,0,1},
  {1,1,0,0}, {1,0,0,0}, {1,0,0,1}
 };
 
-int startwall[9] =  {2,2,3, 1,0,3, 1,0,0};
-int backupwall[9] = {3,3,0, 2,0,0, 2,1,1};
+id0_int_t startwall[9] =  {2,2,3, 1,0,3, 1,0,0};
+id0_int_t backupwall[9] = {3,3,0, 2,0,0, 2,1,1};
 
 
-int	walllength;
+id0_int_t	walllength;
 
 /*
 =============================================================================
@@ -144,10 +144,10 @@ int	walllength;
 ========================
 */
 
-int FollowTrace (fixed tracex, fixed tracey, long deltax, long deltay, int max)
+id0_int_t FollowTrace (fixed tracex, fixed tracey, id0_long_t deltax, id0_long_t deltay, id0_int_t max)
 {
-	int tx,ty,otx,oty;
-	long absdx,absdy,xstep,ystep;
+	id0_int_t tx,ty,otx,oty;
+	id0_long_t absdx,absdy,xstep,ystep;
 
 	tx = tracex>>TILESHIFT;
 	ty = tracey>>TILESHIFT;
@@ -330,11 +330,11 @@ int FollowTrace (fixed tracex, fixed tracey, long deltax, long deltay, int max)
 =================
 */
 
-int BackTrace (int finish)
+id0_int_t BackTrace (id0_int_t finish)
 {
   fixed tracex,tracey;
-  long deltax,deltay,absdx,absdy;
-  int steps,otx,oty,testx,testheight,offset,wall;
+  id0_long_t deltax,deltay,absdx,absdy;
+  id0_int_t steps,otx,oty,testx,testheight,offset,wall;
 
   deltax = viewx-edgex;
   deltay = viewy-edgey;
@@ -356,7 +356,7 @@ int BackTrace (int finish)
     return 0;
 
 //
-// if the start wall is behind the focal point, the trace went too far back
+// if the start wall is behind the focal point, the trace went too id0_far back
 //
   if (ABS(tile.x-focal.x)<2 && ABS(tile.y-focal.y)<2)	// too close
   {
@@ -392,8 +392,8 @@ int BackTrace (int finish)
     //
     // rotate the X value to see if it is behind the view plane
     //
-    if (TransformX (((long)tile.x<<16)+point1x[wall],
-		    ((long)tile.y<<16)+point1y[wall]) < FOCALLENGTH)
+    if (TransformX (((id0_long_t)tile.x<<16)+point1x[wall],
+		    ((id0_long_t)tile.y<<16)+point1y[wall]) < FOCALLENGTH)
     {
       tile.x = otx;
       tile.y = oty;
@@ -443,8 +443,8 @@ int BackTrace (int finish)
 
   wallon = cornerwall[wallon];	// turn to first visable face
 
-  edgex = ((long)tile.x<<16);
-  edgey = ((long)tile.y<<16);
+  edgex = ((id0_long_t)tile.x<<16);
+  edgey = ((id0_long_t)tile.y<<16);
 
   TransformPoint (edgex+point1x[wallon],edgey+point1y[wallon],
     &rightwall->x1,&rightwall->height1);
@@ -470,9 +470,9 @@ int BackTrace (int finish)
 
 void ForwardTrace (void)
 {
-  int offset;
+  id0_int_t offset;
   fixed tracex,tracey;
-  long deltax,deltay;
+  id0_long_t deltax,deltay;
 
   deltax = edgex-viewx;
   deltay = edgey-viewy;
@@ -495,8 +495,8 @@ void ForwardTrace (void)
 //
 // start the new wall
 //
-  edgex = ((long)tile.x<<16);
-  edgey = ((long)tile.y<<16);
+  edgex = ((id0_long_t)tile.x<<16);
+  edgey = ((id0_long_t)tile.y<<16);
 
 //
 // if entire first wall is invisable, corner
@@ -533,9 +533,9 @@ void ForwardTrace (void)
 =================
 */
 
-int FinishWall (void)
+id0_int_t FinishWall (void)
 {
-  char num[20];
+  id0_char_t num[20];
 
   oldwall = rightwall;
 
@@ -584,7 +584,7 @@ int FinishWall (void)
 
 void InsideCorner (void)
 {
-  int offset;
+  id0_int_t offset;
 
   //
   // the wall turned -90 degrees, so draw what we have, move to the new tile,
@@ -628,8 +628,8 @@ void InsideCorner (void)
 
   wallon = cornerwall[wallon];	// turn to first visable face
 
-  edgex = ((long)tile.x<<16)+point1x[wallon];
-  edgey = ((long)tile.y<<16)+point1y[wallon];
+  edgex = ((id0_long_t)tile.x<<16)+point1x[wallon];
+  edgey = ((id0_long_t)tile.y<<16)+point1y[wallon];
 
   if (!BackTrace(0))		// backtrace without finishing a wall
   {
@@ -651,7 +651,7 @@ void InsideCorner (void)
 
 void OutsideCorner (void)
 {
-  int offset;
+  id0_int_t offset;
 
   //
   // edge is the outside edge of a corner, so draw the current wall and
@@ -704,7 +704,7 @@ void OutsideCorner (void)
 
 void FollowWalls (void)
 {
-  int height,newcolor,offset,wall;
+  id0_int_t height,newcolor,offset,wall;
 
 //####################
 //
@@ -738,8 +738,8 @@ restart:
 //
 // transform first edge to screen coordinates
 //
-  edgex = ((long)tile.x<<16);
-  edgey = ((long)tile.y<<16);
+  edgex = ((id0_long_t)tile.x<<16);
+  edgey = ((id0_long_t)tile.y<<16);
 
   TransformPoint (edgex+point1x[wallon],edgey+point1y[wallon],
 	&rightwall->x1,&rightwall->height1);
@@ -748,7 +748,7 @@ restart:
 
 //##################
 //
-// follow the wall as long as possible
+// follow the wall as id0_long_t as possible
 //
 //##################
 
@@ -798,8 +798,8 @@ advance:
 // proceed along wall
 //
 
-	edgex = ((long)tile.x<<16)+point2x[wallon];
-	edgey = ((long)tile.y<<16)+point2y[wallon];
+	edgex = ((id0_long_t)tile.x<<16)+point2x[wallon];
+	edgey = ((id0_long_t)tile.y<<16)+point2y[wallon];
 
 	if (BackTrace(1))		// went behind a closer wall
 	  continue;
@@ -847,8 +847,8 @@ advance:
 //
 //######################
 
-  edgex = ((long)tile.x<<16)+point2x[wallon];
-  edgey = ((long)tile.y<<16)+point2y[wallon];
+  edgex = ((id0_long_t)tile.x<<16)+point2x[wallon];
+  edgey = ((id0_long_t)tile.y<<16)+point2y[wallon];
   FinishWall();
 
   wallon = cornerwall[wallon];
@@ -862,8 +862,8 @@ advance:
   {
     rightwall->x1 = oldwall->x2;		// common edge with last wall
     rightwall->height1 = oldwall->height2;
-    edgex = ((long)tile.x<<16)+point2x[wallon];
-    edgey = ((long)tile.y<<16)+point2y[wallon];
+    edgex = ((id0_long_t)tile.x<<16)+point2x[wallon];
+    edgey = ((id0_long_t)tile.y<<16)+point2y[wallon];
     FinishWall();
   }
 

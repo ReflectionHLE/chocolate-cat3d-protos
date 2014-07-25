@@ -16,9 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "id_heads.h"
-#include <math.hH>
-//#include <VALUES.H>
+#include "ID_HEADS.H"
+#include <MATH.H>
+#include <VALUES.H>
 
 //#define PROFILE
 
@@ -269,15 +269,15 @@ extern	id0_boolean_t		running,slowturn;
 
 extern	id0_int_t			bordertime;
 
-extern	byte		tilemap[MAPSIZE][MAPSIZE];
+extern	id0_byte_t		tilemap[MAPSIZE][MAPSIZE];
 extern	objtype		*actorat[MAPSIZE][MAPSIZE];
-extern	byte		spotvis[MAPSIZE][MAPSIZE];
+extern	id0_byte_t		spotvis[MAPSIZE][MAPSIZE];
 
 extern	objtype 	objlist[MAXACTORS],*new,*obj,*player;
 
 extern	id0_unsigned_t	farmapylookup[MAPSIZE];
-extern	byte		*nearmapylookup[MAPSIZE];
-extern	byte		update[];
+extern	id0_byte_t		*nearmapylookup[MAPSIZE];
+extern	id0_byte_t		update[];
 
 extern	id0_boolean_t		godmode,singlestep;
 extern	id0_int_t			extravbls;
@@ -286,7 +286,7 @@ extern	id0_int_t			mousexmove,mouseymove;
 extern	id0_int_t			pointcount,pointsleft;
 
 
-void CenterWindow(word w,word h);
+void CenterWindow(id0_word_t w,id0_word_t h);
 void DebugMemory (void);
 void PicturePause (void);
 id0_int_t  DebugKeys (void);
@@ -428,7 +428,7 @@ typedef struct
 	id0_unsigned_t	codeofs[65];
 	id0_unsigned_t	start[65];
 	id0_unsigned_t	width[65];
-	byte		code[];
+	id0_byte_t		code[];
 }	t_compscale;
 
 typedef struct
@@ -442,19 +442,19 @@ extern id0_unsigned_t	scaleblockwidth,
 		scaleblockheight,
 		scaleblockdest;
 
-extern	byte	plotpix[8];
-extern	byte	bitmasks1[8][8];
-extern	byte	bitmasks2[8][8];
+extern	id0_byte_t	plotpix[8];
+extern	id0_byte_t	bitmasks1[8][8];
+extern	id0_byte_t	bitmasks2[8][8];
 
 
-extern	t_compscale _seg *scaledirectory[MAXSCALE+1];
-extern	t_compshape _seg *shapedirectory[NUMSCALEPICS];
+extern	t_compscale id0_seg *scaledirectory[MAXSCALE+1];
+extern	t_compshape id0_seg *shapedirectory[NUMSCALEPICS];
 extern	memptr			walldirectory[NUMSCALEWALLS];
 extern	id0_unsigned_t	shapesize[MAXSCALE+1];
 
 void 		DeplanePic (id0_int_t picnum);
-void ScaleShape (id0_int_t xcenter, t_compshape _seg *compshape, id0_unsigned_t scale);
-id0_unsigned_t	BuildCompShape (t_compshape _seg **finalspot);
+void ScaleShape (id0_int_t xcenter, t_compshape id0_seg *compshape, id0_unsigned_t scale);
+id0_unsigned_t	BuildCompShape (t_compshape id0_seg **finalspot);
 
 
 /*

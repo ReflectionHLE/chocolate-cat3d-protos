@@ -21,13 +21,13 @@
 #include "C3_DEF.H"
 #pragma hdrstop
 
-//const	unsigned	viewheight = 144;
-const	unsigned	screenbwide = 40;
-const	byte		BACKGROUNDPIX	=   5;
+//const	id0_unsigned_t	viewheight = 144;
+const	id0_unsigned_t	screenbwide = 40;
+const	id0_byte_t		BACKGROUNDPIX	=   5;
 
-unsigned		shapesize[MAXSCALE+1];
-t_compscale _seg *scaledirectory[MAXSCALE+1];
-t_compshape _seg *shapedirectory[NUMSCALEPICS];
+id0_unsigned_t		shapesize[MAXSCALE+1];
+t_compscale id0_seg *scaledirectory[MAXSCALE+1];
+t_compshape id0_seg *shapedirectory[NUMSCALEPICS];
 memptr			walldirectory[NUMSCALEWALLS];
 
 /*
@@ -44,15 +44,15 @@ memptr			walldirectory[NUMSCALEWALLS];
 ===========================
 */
 
-void DeplanePic (int picnum)
+void DeplanePic (id0_int_t picnum)
 {
-	byte		far *plane0,far *plane1,far *plane2,far *plane3;
-	byte		by0,by1,by2,by3;
-	unsigned	x,y,b,color,shift,width,height;
-	byte		*dest;
+	id0_byte_t		id0_far *plane0,id0_far *plane1,id0_far *plane2,id0_far *plane3;
+	id0_byte_t		by0,by1,by2,by3;
+	id0_unsigned_t	x,y,b,color,shift,width,height;
+	id0_byte_t		*dest;
 
 //
-// convert ega pixels to byte color values in a temp buffer
+// convert ega pixels to id0_byte_t color values in a temp buffer
 //
 	width = pictable[picnum-STARTPICS].width;
 	height = pictable[picnum-STARTPICS].height;
@@ -62,7 +62,7 @@ void DeplanePic (int picnum)
 
 	memset (spotvis,BACKGROUNDPIX,sizeof(spotvis));
 
-	plane0 = (byte _seg *)grsegs[picnum];
+	plane0 = (id0_byte_t id0_seg *)grsegs[picnum];
 	plane1 = plane0 + width*height;
 	plane2 = plane1 + width*height;
 	plane3 = plane2 + width*height;
@@ -131,20 +131,20 @@ void DeplanePic (int picnum)
 ========================
 */
 
-unsigned BuildCompScale (int height, memptr *finalspot)
+id0_unsigned_t BuildCompScale (id0_int_t height, memptr *finalspot)
 {
-	t_compscale 	_seg *work;
-	byte		far *code;
+	t_compscale 	id0_seg *work;
+	id0_byte_t		id0_far *code;
 
-	int			i;
-	long		fix,step;
-	unsigned	src,totalscaled,totalsize;
-	int			startpix,endpix,toppix;
+	id0_int_t			i;
+	id0_long_t		fix,step;
+	id0_unsigned_t	src,totalscaled,totalsize;
+	id0_int_t			startpix,endpix,toppix;
 
 
 	MM_GetPtr (&(memptr)work,20000);
 
-	step = ((long)height<<16) / 64;
+	step = ((id0_long_t)height<<16) / 64;
 	code = &work->code[0];
 	toppix = (viewheight-height)/2;
 	fix = 0;
@@ -195,7 +195,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 			*code++ = 0x26;
 			*code++ = 0x20;
 			*code++ = 0x85;
-			*((unsigned far *)code)++ = startpix*screenbwide;
+			*((id0_unsigned_t id0_far *)code)++ = startpix*screenbwide;
 		}
 
 	}
@@ -207,7 +207,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 
 	totalsize = FP_OFF(code);
 	MM_GetPtr (finalspot,totalsize);
-	_fmemcpy ((byte _seg *)(*finalspot),(byte _seg *)work,totalsize);
+	_fmemcpy ((id0_byte_t id0_seg *)(*finalspot),(id0_byte_t id0_seg *)work,totalsize);
 	MM_FreePtr (&(memptr)work);
 
 	return totalsize;
@@ -223,8 +223,8 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 =
 = typedef struct
 = {
-=	unsigned	width;
-=	unsigned	codeofs[64];
+=	id0_unsigned_t	width;
+=	id0_unsigned_t	codeofs[64];
 = }	t_compshape;
 =
 = Width is the number of compiled line draws in the shape.  The shape
@@ -237,7 +237,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 = Each code offset will draw one vertical line of the shape, consisting
 = of 0 or more segments of scaled pixels.
 =
-= The scaled shapes use ss:0-4 as a scratch variable for the far call to
+= The scaled shapes use ss:0-4 as a scratch variable for the id0_far call to
 = the compiled scaler, so zero it back out after the shape is scaled, or
 = a "null pointer assignment" will result upon termination.
 =
@@ -248,7 +248,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 = cx	toast
 = dx	segment of compiled shape
 = si	toast
-= di	byte at top of view area to draw the line in
+= di	id0_byte_t at top of view area to draw the line in
 = bp	0
 = ss:2 and ds  the segment of the compiled scaler to use
 = es	screenseg
@@ -267,7 +267,7 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 = -------------------------------
 =	mov	bx,[(segend+1)*2]
 =	mov	cx,[bx]
-=	mov	[BYTE PTR bx],0xc8		// far return
+=	mov	[BYTE PTR bx],0xc8		// id0_far return
 =	mov	ax,[segstart*2]
 =	mov	[ss:0],ax				// entry point into the compiled scaler
 =	mov	ds,dx                   // (mov ds,cs) the data is after the compiled code
@@ -283,14 +283,14 @@ unsigned BuildCompScale (int height, memptr *finalspot)
 ========================
 */
 
-unsigned BuildCompShape (t_compshape _seg **finalspot)
+id0_unsigned_t BuildCompShape (t_compshape id0_seg **finalspot)
 {
-	t_compshape 	_seg *work;
-	byte		far *code;
-	int			firstline,lastline,x,y;
-	unsigned	firstpix,lastpix,width;
-	unsigned	totalsize,pixelofs;
-	unsigned	buff;
+	t_compshape 	id0_seg *work;
+	id0_byte_t		id0_far *code;
+	id0_int_t			firstline,lastline,x,y;
+	id0_unsigned_t	firstpix,lastpix,width;
+	id0_unsigned_t	totalsize,pixelofs;
+	id0_unsigned_t	buff;
 
 
 //	MM_GetPtr (&(memptr)work,20000);
@@ -298,7 +298,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 	EGAREADMAP(0);		// use ega screen memory for temp buffer
 	EGAMAPMASK(1);
 	buff = screenloc[1];
-	work = (t_compshape _seg *)(0xa000+(buff+15)/16);
+	work = (t_compshape id0_seg *)(0xa000+(buff+15)/16);
 
 //
 // find the width of the shape
@@ -333,7 +333,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 	width = lastline-firstline+1;
 
 	work->width = width;
-	code = (byte far *)&work->codeofs[width];
+	code = (id0_byte_t id0_far *)&work->codeofs[width];
 
 //
 // copy all non background pixels to the work space
@@ -382,7 +382,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 		//
 			*code++ = 0x8b;		// mov bx,[lastpix*2]
 			*code++ = 0x1e;
-			*((unsigned far *)code)++ = lastpix*2;
+			*((id0_unsigned_t id0_far *)code)++ = lastpix*2;
 
 			*code++ = 0x8b;		// mov cx,[bx]
 			*code++ = 0x0f;
@@ -392,7 +392,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 			*code++ = 0xcb;
 
 			*code++ = 0xa1;		// mov ax,[firstpix*2]	/*************
-			*((unsigned far *)code)++ = firstpix*2;
+			*((id0_unsigned_t id0_far *)code)++ = firstpix*2;
 
 			*code++ = 0x36;		// mov [ss:0],ax
 			*code++ = 0xa3;
@@ -403,7 +403,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 			*code++ = 0xda;
 
 			*code++ = 0xbe;		// mov si,OFFSET pixelofs-firstpixel
-			*((unsigned far *)code)++ = pixelofs-firstpix;
+			*((id0_unsigned_t id0_far *)code)++ = pixelofs-firstpix;
 
 			*code++ = 0xff;		// call [DWORD bp]
 			*code++ = 0x5e;
@@ -431,7 +431,7 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 //
 	totalsize = FP_OFF(code);
 	MM_GetPtr ((memptr *)finalspot,totalsize);
-	_fmemcpy ((byte _seg *)(*finalspot),(byte _seg *)work,totalsize);
+	_fmemcpy ((id0_byte_t id0_seg *)(*finalspot),(id0_byte_t id0_seg *)work,totalsize);
 //	MM_FreePtr (&(memptr)work);
 
 	return totalsize;
@@ -455,23 +455,23 @@ unsigned BuildCompShape (t_compshape _seg **finalspot)
 =======================
 */
 
-static	long		longtemp;
+static	id0_long_t		longtemp;
 
-void ScaleShape (int xcenter, t_compshape _seg *compshape, unsigned scale)
+void ScaleShape (id0_int_t xcenter, t_compshape id0_seg *compshape, id0_unsigned_t scale)
 {
-	t_compscale _seg *comptable;
-	unsigned	width,scalewidth;
-	int			x,pixel,lastpixel,pixwidth,min;
-	unsigned	far *codehandle, far *widthptr;
-	unsigned	badcodeptr;
-	int			rightclip;
+	t_compscale id0_seg *comptable;
+	id0_unsigned_t	width,scalewidth;
+	id0_int_t			x,pixel,lastpixel,pixwidth,min;
+	id0_unsigned_t	id0_far *codehandle, id0_far *widthptr;
+	id0_unsigned_t	badcodeptr;
+	id0_int_t			rightclip;
 
 	if (!compshape)
 		Quit ("ScaleShape: NULL compshape ptr!");
 
 	scale = (scale+1)/2;
 	if (!scale)
-		return;								// too far away
+		return;								// too id0_far away
 	if (scale>MAXSCALE)
 		scale = MAXSCALE;
 	comptable = scaledirectory[scale];
@@ -513,12 +513,12 @@ void ScaleShape (int xcenter, t_compshape _seg *compshape, unsigned scale)
 // scan from the left until it is on screen, leaving
 // [pixel],[pixwidth],[codehandle],and [widthptr] set correctly
 //
-	*(((unsigned *)&longtemp)+1) = (unsigned)compshape;	// seg of shape
+	*(((id0_unsigned_t *)&longtemp)+1) = (id0_unsigned_t)compshape;	// seg of shape
 	codehandle = &compshape->codeofs[0];
 	badcodeptr = compshape->codeofs[width];
 	widthptr = &comptable->width[0];
 	asm	mov	ax,[comptable]
-	asm	mov	WORD PTR [2],ax				// ds:0-4 is used as a far call pointer
+	asm	mov	WORD PTR [2],ax				// ds:0-4 is used as a id0_far call pointer
 										// by the compiled shapes
 	pixwidth = *widthptr;				// scaled width of this pixel
 	while (!pixwidth)
@@ -575,8 +575,8 @@ void ScaleShape (int xcenter, t_compshape _seg *compshape, unsigned scale)
 	//
 	// scale a vertical segment [pixwidth] pixels wide at [pixel]
 	//
-		(unsigned)longtemp = *codehandle;	// offset of compiled code
-		if ((unsigned)longtemp == badcodeptr)
+		(id0_unsigned_t)longtemp = *codehandle;	// offset of compiled code
+		if ((id0_unsigned_t)longtemp == badcodeptr)
 			Quit ("ScaleShape: codehandle past end!");
 
 		asm	mov	bx,[pixel]
@@ -616,7 +616,7 @@ void ScaleShape (int xcenter, t_compshape _seg *compshape, unsigned scale)
 		asm	jz	nosecond
 
 	//
-	// draw a second byte for vertical strips that cross two bytes
+	// draw a second id0_byte_t for vertical strips that cross two bytes
 	//
 		asm	inc	di
 		asm	mov	dx,GC_INDEX+1
@@ -663,7 +663,7 @@ nosecond:;
 // bit mask tables for drawing scaled strips up to eight pixels wide
 //
 
-byte	bitmasks1[8][8] = {
+id0_byte_t	bitmasks1[8][8] = {
 {0x80,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff},
 {0x40,0x60,0x70,0x78,0x7c,0x7e,0x7f,0x7f},
 {0x20,0x30,0x38,0x3c,0x3e,0x3f,0x3f,0x3f},
@@ -673,7 +673,7 @@ byte	bitmasks1[8][8] = {
 {0x2,0x3,0x3,0x3,0x3,0x3,0x3,0x3},
 {0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1} };
 
-byte	bitmasks2[8][8] = {
+id0_byte_t	bitmasks2[8][8] = {
 {0,0,0,0,0,0,0,0},
 {0,0,0,0,0,0,0,0x80},
 {0,0,0,0,0,0,0x80,0xc0},

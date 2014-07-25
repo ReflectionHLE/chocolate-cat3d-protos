@@ -23,8 +23,8 @@
 
 //#define DRAWEACH				// draw walls one at a time for debugging
 
-unsigned	highest;
-unsigned	mostwalls,numwalls;
+id0_unsigned_t	highest;
+id0_unsigned_t	mostwalls,numwalls;
 
 /*
 =============================================================================
@@ -37,16 +37,16 @@ unsigned	mostwalls,numwalls;
 #define PI	3.141592657
 #define ANGLEQUAD	(ANGLES/4)
 
-unsigned	oldend;
+id0_unsigned_t	oldend;
 
 #define FINEANGLES	3600
 
 #define MINRATIO	16
 
 
-const	unsigned	MAXSCALEHEIGHT	= (VIEWWIDTH/2);
-const	unsigned	MAXVISHEIGHT	= (VIEWHEIGHT/2);
-const	unsigned	BASESCALE		= 32;
+const	id0_unsigned_t	MAXSCALEHEIGHT	= (VIEWWIDTH/2);
+const	id0_unsigned_t	MAXVISHEIGHT	= (VIEWHEIGHT/2);
+const	id0_unsigned_t	BASESCALE		= 32;
 
 /*
 =============================================================================
@@ -61,13 +61,13 @@ const	unsigned	BASESCALE		= 32;
 // maximum possible distance seperating them (for scaling overflow)
 //
 
-unsigned screenloc[3]= {0x900,0x2000,0x3700};
-unsigned freelatch = 0x4e00;
+id0_unsigned_t screenloc[3]= {0x900,0x2000,0x3700};
+id0_unsigned_t freelatch = 0x4e00;
 
-boolean		fizzlein;
+id0_boolean_t		fizzlein;
 
-long	scaleshapecalll;
-long	scaletablecall;
+id0_long_t	scaleshapecalll;
+id0_long_t	scaletablecall;
 
 /*
 =============================================================================
@@ -77,12 +77,12 @@ long	scaletablecall;
 =============================================================================
 */
 
-long 	bytecount,endcount;		// for profiling
-int		animframe;
-int		pixelangle[VIEWWIDTH];
-int		far finetangent[FINEANGLES+1];
-int		fineviewangle;
-unsigned	viewxpix,viewypix;
+id0_long_t 	bytecount,endcount;		// for profiling
+id0_int_t		animframe;
+id0_int_t		pixelangle[VIEWWIDTH];
+id0_int_t		id0_far finetangent[FINEANGLES+1];
+id0_int_t		fineviewangle;
+id0_unsigned_t	viewxpix,viewypix;
 
 /*
 ============================================================================
@@ -95,7 +95,7 @@ unsigned	viewxpix,viewypix;
 fixed	tileglobal	= TILEGLOBAL;
 fixed	focallength	= FOCALLENGTH;
 fixed	mindist		= MINDIST;
-int		viewheight	= VIEWHEIGHT;
+id0_int_t		viewheight	= VIEWHEIGHT;
 fixed scale;
 
 
@@ -105,7 +105,7 @@ tilept	tile,lasttile,		// tile of wall being followed
 
 globpt edge,view;
 
-int	segstart[VIEWHEIGHT],	// addline tracks line segment and draws
+id0_int_t	segstart[VIEWHEIGHT],	// addline tracks line segment and draws
 	segend[VIEWHEIGHT],
 	segcolor[VIEWHEIGHT];	// only when the color changes
 
@@ -119,39 +119,39 @@ walltype	walls[MAXWALLS],*leftwall,*rightwall;
 // refresh stuff
 //
 
-int screenpage;
+id0_int_t screenpage;
 
-long lasttimecount;
+id0_long_t lasttimecount;
 
 //
 // rendering stuff
 //
 
-int firstangle,lastangle;
+id0_int_t firstangle,lastangle;
 
 fixed prestep;
 
 fixed sintable[ANGLES+ANGLES/4],*costable = sintable+(ANGLES/4);
 
 fixed	viewx,viewy;			// the focal point
-int	viewangle;
+id0_int_t	viewangle;
 fixed	viewsin,viewcos;
 
-int	zbuffer[VIEWXH+1];	// holds the height of the wall at that point
+id0_int_t	zbuffer[VIEWXH+1];	// holds the height of the wall at that point
 
 //==========================================================================
 
-void	DrawLine (int xl, int xh, int y,int color);
+void	DrawLine (id0_int_t xl, id0_int_t xh, id0_int_t y,id0_int_t color);
 void	DrawWall (walltype *wallptr);
-void	TraceRay (unsigned angle);
+void	TraceRay (id0_unsigned_t angle);
 fixed	FixedByFrac (fixed a, fixed b);
 fixed	FixedAdd (void);
 fixed	TransformX (fixed gx, fixed gy);
-int		FollowTrace (fixed tracex, fixed tracey, long deltax, long deltay, int max);
-int		BackTrace (int finish);
+id0_int_t		FollowTrace (fixed tracex, fixed tracey, id0_long_t deltax, id0_long_t deltay, id0_int_t max);
+id0_int_t		BackTrace (id0_int_t finish);
 void	ForwardTrace (void);
-int		TurnClockwise (void);
-int		TurnCounterClockwise (void);
+id0_int_t		TurnClockwise (void);
+id0_int_t		TurnCounterClockwise (void);
 void	FollowWall (void);
 
 void	NewScene (void);
@@ -174,13 +174,13 @@ void	BuildTables (void);
 ==================
 */
 
-unsigned static	char dotmask[8] = {0x80,0x40,0x20,0x10,8,4,2,1};
-unsigned static	char leftmask[8] = {0xff,0x7f,0x3f,0x1f,0xf,7,3,1};
-unsigned static	char rightmask[8] = {0x80,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff};
+static	id0_unsigned_char_t dotmask[8] = {0x80,0x40,0x20,0x10,8,4,2,1};
+static	id0_unsigned_char_t leftmask[8] = {0xff,0x7f,0x3f,0x1f,0xf,7,3,1};
+static	id0_unsigned_char_t rightmask[8] = {0x80,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff};
 
-void DrawLine (int xl, int xh, int y,int color)
+void DrawLine (id0_int_t xl, id0_int_t xh, id0_int_t y,id0_int_t color)
 {
-  unsigned dest,xlp,xlb,xhb,maskleft,maskright,maskdot,mid;
+  id0_unsigned_t dest,xlp,xlb,xhb,maskleft,maskright,maskdot,mid;
 
   xlb=xl/8;
   xhb=xh/8;
@@ -209,7 +209,7 @@ void DrawLine (int xl, int xh, int y,int color)
   if (xlb==xhb)
   {
   //
-  // entire line is in one byte
+  // entire line is in one id0_byte_t
   //
 
 	maskleft&=maskright;
@@ -263,9 +263,9 @@ asm	xchg	bh,[es:di]	// load latches and write pixels
 
 //==========================================================================
 
-void DrawLineDot (int xl, int xh, int y,int color)
+void DrawLineDot (id0_int_t xl, id0_int_t xh, id0_int_t y,id0_int_t color)
 {
-  unsigned dest,xlp,xlb,xhb,maskleft,maskright,maskdot,mid;
+  id0_unsigned_t dest,xlp,xlb,xhb,maskleft,maskright,maskdot,mid;
 
   xlb=xl/8;
   xhb=xh/8;
@@ -295,7 +295,7 @@ void DrawLineDot (int xl, int xh, int y,int color)
   if (xlb==xhb)
   {
   //
-  // entire line is in one byte
+  // entire line is in one id0_byte_t
   //
 
 	maskleft&=maskright;
@@ -369,7 +369,7 @@ asm	xchg	bh,[es:di]	// load latches and write pixels
 //==========================================================================
 
 
-long		wallscalesource;
+id0_long_t		wallscalesource;
 
 #ifdef DRAWEACH
 /*
@@ -380,23 +380,23 @@ long		wallscalesource;
 ====================
 */
 
-void near ScaleOneWall (int xl, int xh)
+void near ScaleOneWall (id0_int_t xl, id0_int_t xh)
 {
-	int	x,pixwidth,height;
+	id0_int_t	x,pixwidth,height;
 
-	*(((unsigned *)&wallscalesource)+1) = wallseg[xl];
+	*(((id0_unsigned_t *)&wallscalesource)+1) = wallseg[xl];
 
 	for (x=xl;x<=xh;x+=pixwidth)
 	{
 		height = wallheight[x];
 		pixwidth = wallwidth[x];
-		(unsigned)wallscalesource = wallofs[x];
+		(id0_unsigned_t)wallscalesource = wallofs[x];
 
-		*(((unsigned *)&scaletablecall)+1) = (unsigned)scaledirectory[height];
-		(unsigned)scaletablecall = scaledirectory[height]->codeofs[0];
+		*(((id0_unsigned_t *)&scaletablecall)+1) = (id0_unsigned_t)scaledirectory[height];
+		(id0_unsigned_t)scaletablecall = scaledirectory[height]->codeofs[0];
 
 		//
-		// scale a byte wide strip of wall
+		// scale a id0_byte_t wide strip of wall
 		//
 		asm	mov	bx,[x]
 		asm	mov	di,bx
@@ -422,7 +422,7 @@ void near ScaleOneWall (int xl, int xh)
 		asm	jz	nosecond
 
 		//
-		// draw a second byte for vertical strips that cross two bytes
+		// draw a second id0_byte_t for vertical strips that cross two bytes
 		//
 		asm	inc	di
 		asm	out	dx,al						// set bit mask register
@@ -435,7 +435,7 @@ void near ScaleOneWall (int xl, int xh)
 
 #endif
 
-int	walllight1[NUMFLOORS] = {0,
+id0_int_t	walllight1[NUMFLOORS] = {0,
 	WALL1LPIC,WALL2LPIC,WALL3LPIC,WALL4LPIC,WALL5LPIC,WALL6LPIC,WALL7LPIC,
 	WALL1LPIC,WALL2LPIC,WALL3LPIC,WALL4LPIC,WALL5LPIC,WALL6LPIC,WALL7LPIC,
 	EXPWALL1PIC,EXPWALL2PIC,EXPWALL3PIC,
@@ -444,7 +444,7 @@ int	walllight1[NUMFLOORS] = {0,
 	GDOOR1PIC,GDOOR2PIC,GDOOR1PIC,GDOOR2PIC,
 	BDOOR1PIC,BDOOR2PIC,BDOOR1PIC,BDOOR2PIC};
 
-int	walldark1[NUMFLOORS] = {0,
+id0_int_t	walldark1[NUMFLOORS] = {0,
 	WALL1DPIC,WALL2DPIC,WALL3DPIC,WALL4DPIC,WALL5DPIC,WALL6DPIC,WALL7DPIC,
 	WALL1DPIC,WALL2DPIC,WALL3DPIC,WALL4DPIC,WALL5DPIC,WALL6DPIC,WALL7DPIC,
 	EXPWALL1PIC,EXPWALL2PIC,EXPWALL3PIC,
@@ -453,7 +453,7 @@ int	walldark1[NUMFLOORS] = {0,
 	GDOOR1PIC,GDOOR2PIC,GDOOR1PIC,GDOOR2PIC,
 	BDOOR1PIC,BDOOR2PIC,BDOOR1PIC,BDOOR2PIC};
 
-int	walllight2[NUMFLOORS] = {0,
+id0_int_t	walllight2[NUMFLOORS] = {0,
 	WALL1LPIC,WALL2LPIC,WALL3LPIC,WALL4LPIC,WALL5LPIC,WALL6LPIC,WALL7LPIC,
 	WALL1LPIC,WALL2LPIC,WALL3LPIC,WALL4LPIC,WALL5LPIC,WALL6LPIC,WALL7LPIC,
 	EXPWALL1PIC,EXPWALL2PIC,EXPWALL3PIC,
@@ -462,7 +462,7 @@ int	walllight2[NUMFLOORS] = {0,
 	GDOOR2PIC,GDOOR1PIC,GDOOR2PIC,GDOOR1PIC,
 	BDOOR2PIC,BDOOR1PIC,BDOOR2PIC,BDOOR1PIC};
 
-int	walldark2[NUMFLOORS] = {0,
+id0_int_t	walldark2[NUMFLOORS] = {0,
 	WALL1DPIC,WALL2DPIC,WALL3DPIC,WALL4DPIC,WALL5DPIC,WALL6DPIC,WALL7DPIC,
 	WALL1DPIC,WALL2DPIC,WALL3DPIC,WALL4DPIC,WALL5DPIC,WALL6DPIC,WALL7DPIC,
 	EXPWALL1PIC,EXPWALL2PIC,EXPWALL3PIC,
@@ -487,18 +487,18 @@ int	walldark2[NUMFLOORS] = {0,
 
 void DrawVWall (walltype *wallptr)
 {
-	int			x,i;
-	unsigned	source;
-	unsigned	width,sourceint;
-	unsigned	wallpic,wallpicseg;
-	unsigned	skip;
-	long		fracheight,fracstep,longheightchange;
-	unsigned	height;
-	int			heightchange;
-	unsigned	slope,distance;
-	int			traceangle,angle;
-	int			mapadd;
-	unsigned	lastpix,lastsource,lastwidth;
+	id0_int_t			x,i;
+	id0_unsigned_t	source;
+	id0_unsigned_t	width,sourceint;
+	id0_unsigned_t	wallpic,wallpicseg;
+	id0_unsigned_t	skip;
+	id0_long_t		fracheight,fracstep,longheightchange;
+	id0_unsigned_t	height;
+	id0_int_t			heightchange;
+	id0_unsigned_t	slope,distance;
+	id0_int_t			traceangle,angle;
+	id0_int_t			mapadd;
+	id0_unsigned_t	lastpix,lastsource,lastwidth;
 
 
 	if (wallptr->rightclip < wallptr->leftclip)
@@ -517,11 +517,11 @@ void DrawVWall (walltype *wallptr)
 		heightchange = wallptr->height2 - wallptr->height1;
 		asm	mov	ax,[heightchange]
 		asm	mov	WORD PTR [longheightchange+2],ax
-		asm	mov	WORD PTR [longheightchange],0	// avoid long shift by 16
+		asm	mov	WORD PTR [longheightchange],0	// avoid id0_long_t shift by 16
 		fracstep = longheightchange/width;
 	}
 
-	fracheight = ((long)wallptr->height1<<16)+0x8000;
+	fracheight = ((id0_long_t)wallptr->height1<<16)+0x8000;
 	skip = wallptr->leftclip - wallptr->x1;
 	if (skip)
 		fracheight += fracstep*skip;
@@ -581,7 +581,7 @@ void DrawVWall (walltype *wallptr)
 
 	mapadd = 64*64-mapadd;				// make sure it stays positive
 
-	wallpicseg = (unsigned)walldirectory[wallpic-FIRSTWALLPIC];
+	wallpicseg = (id0_unsigned_t)walldirectory[wallpic-FIRSTWALLPIC];
 	if (traceangle > FINEANGLES/2)
 		traceangle -= FINEANGLES;
 
@@ -590,7 +590,7 @@ void DrawVWall (walltype *wallptr)
 //
 // IMPORTANT!  This loop is executed around 5000 times / second!
 //
-	lastpix = lastsource = (unsigned)-1;
+	lastpix = lastsource = (id0_unsigned_t)-1;
 
 	for (x = wallptr->leftclip ; x <= wallptr->rightclip ; x++)
 	{
@@ -629,7 +629,7 @@ storeheight:
 		slope = finetangent[angle];
 
 //
-// distance is an unsigned 6.6 bit number (12 pixel bits)
+// distance is an id0_unsigned_t 6.6 bit number (12 pixel bits)
 // slope is a signed 5.10 bit number
 // result is a signed 11.16 bit number
 //
@@ -662,7 +662,7 @@ storeheight:
 
 		if (source != lastsource)
 		{
-			if (lastpix != (unsigned)-1)
+			if (lastpix != (id0_unsigned_t)-1)
 			{
 				wallofs[lastpix] = lastsource;
 				wallseg[lastpix] = wallpicseg;
@@ -699,13 +699,13 @@ storeheight:
 ==================
 */
 
-int tilecolor;
+id0_int_t tilecolor;
 
-void TraceRay (unsigned angle)
+void TraceRay (id0_unsigned_t angle)
 {
-  long tracex,tracey,tracexstep,traceystep,searchx,searchy;
+  id0_long_t tracex,tracey,tracexstep,traceystep,searchx,searchy;
   fixed fixtemp;
-  int otx,oty,searchsteps;
+  id0_int_t otx,oty,searchsteps;
 
   tracexstep = costable[angle];
   traceystep = sintable[angle];
@@ -757,13 +757,13 @@ void TraceRay (unsigned angle)
 	searchy/=2;
 	if (tile.x!=otx && tile.y!=oty)
 	{
-	 // still too far
+	 // still too id0_far
 	  tracex -= searchx;
 	  tracey += searchy;
 	}
 	else
 	{
-	 // not far enough, no tiles crossed
+	 // not id0_far enough, no tiles crossed
 	  tracex += searchx;
 	  tracey -= searchy;
 	}
@@ -773,8 +773,8 @@ void TraceRay (unsigned angle)
 	//
 	if (++searchsteps == 16)
 	{
-	  tracex = (long)otx<<TILESHIFT;
-	  tracey = (long)oty<<TILESHIFT;
+	  tracex = (id0_long_t)otx<<TILESHIFT;
+	  tracey = (id0_long_t)oty<<TILESHIFT;
 	  if (tracexstep>0)
 	  {
 		if (traceystep<0)
@@ -852,7 +852,7 @@ aok:
 //
 asm	mov	bx,[WORD PTR b]
 asm	mul	bx					// fraction*fraction
-asm	mov	di,dx				// di is low word of result
+asm	mov	di,dx				// di is low id0_word_t of result
 asm	mov	ax,cx				//
 asm	mul	bx					// units*fraction
 asm add	ax,di
@@ -902,9 +902,9 @@ ansok:;
 ========================
 */
 
-void TransformPoint (fixed gx, fixed gy, int *screenx, unsigned *screenheight)
+void TransformPoint (fixed gx, fixed gy, id0_int_t *screenx, id0_unsigned_t *screenheight)
 {
-  int ratio;
+  id0_int_t ratio;
   fixed gxt,gyt,nx,ny;
 
 //
@@ -950,7 +950,7 @@ void TransformPoint (fixed gx, fixed gy, int *screenx, unsigned *screenheight)
 //
 void TransformActor (objtype *ob)
 {
-  int ratio;
+  id0_int_t ratio;
   fixed gx,gy,gxt,gyt,nx,ny;
 
 //
@@ -993,7 +993,7 @@ void TransformActor (objtype *ob)
 
 fixed TransformX (fixed gx, fixed gy)
 {
-  int ratio;
+  id0_int_t ratio;
   fixed gxt,gyt,nx,ny;
 
 //
@@ -1030,22 +1030,22 @@ fixed TransformX (fixed gx, fixed gy)
 
 void BuildTables (void)
 {
-  int 		i;
-  long		intang;
-  long		x;
-  float 	angle,anglestep,radtoint;
-  double	tang;
+  id0_int_t 		i;
+  id0_long_t		intang;
+  id0_long_t		x;
+  id0_float_t 	angle,anglestep,radtoint;
+  id0_double_t	tang;
   fixed 	value;
 
 //
 // calculate the angle offset from view angle of each pixel's ray
 //
-	radtoint = (float)FINEANGLES/2/PI;
+	radtoint = (id0_float_t)FINEANGLES/2/PI;
 	for (i=0;i<VIEWWIDTH/2;i++)
 	{
 	// start 1/2 pixel over, so viewangle bisects two middle pixels
 		x = (TILEGLOBAL*i+TILEGLOBAL/2)/VIEWWIDTH;
-		tang = (float)x/(FOCALLENGTH+MINDIST);
+		tang = (id0_float_t)x/(FOCALLENGTH+MINDIST);
 		angle = atan(tang);
 		intang = angle*radtoint;
 		pixelangle[VIEWWIDTH/2-1-i] = intang;
@@ -1056,7 +1056,7 @@ void BuildTables (void)
 // calculate fine tangents
 // 1 sign bit, 5 units (clipped to), 10 fracs
 //
-#define MININT	(-MAXINT)
+#define ID0_MININT (-ID0_MAXINT)
 
 	for (i=0;i<FINEANGLES/4;i++)
 	{
@@ -1066,9 +1066,9 @@ void BuildTables (void)
 		// if the tangent is not reprentable in this many bits, bound the
 		// units part ONLY
 		//
-		if (intang>MAXINT)
+		if (intang>ID0_MAXINT)
 			intang = 0x8f00 | (intang & 0xff);
-		else if (intang<MININT)
+		else if (intang<ID0_MININT)
 			intang = 0xff00 | (intang & 0xff);
 
 		finetangent[i] = intang;
@@ -1088,7 +1088,7 @@ void BuildTables (void)
 // costable overlays sintable with a quarter phase shift
 // ANGLES is assumed to be divisable by four
 //
-// The low word of the value is the fraction, the high bit is the sign bit,
+// The low id0_word_t of the value is the fraction, the high bit is the sign bit,
 // bits 16-30 should be 0
 //
 
@@ -1108,14 +1108,14 @@ void BuildTables (void)
 //
 // figure trace angles for first and last pixel on screen
 //
-  angle = atan((float)VIEWWIDTH/2*scale/FOCALLENGTH);
+  angle = atan((id0_float_t)VIEWWIDTH/2*scale/FOCALLENGTH);
   angle *= ANGLES/(PI*2);
 
-  intang = (int)angle+1;
+  intang = (id0_int_t)angle+1;
   firstangle = intang;
   lastangle = -intang;
 
-  prestep = GLOBAL1*((float)FOCALLENGTH/costable[firstangle]);
+  prestep = GLOBAL1*((id0_float_t)FOCALLENGTH/costable[firstangle]);
 
 //
 // misc stuff
@@ -1196,7 +1196,7 @@ asm	out	dx,al
 
 void DrawWallList (void)
 {
-	int i,leftx,newleft,rightclip;
+	id0_int_t i,leftx,newleft,rightclip;
 	walltype *wall, *check;
 
 asm	mov	ax,ds
@@ -1266,10 +1266,10 @@ objtype *depthsort[MAXACTORS];
 
 void DrawScaleds (void)
 {
-	int 		i,j,least,numvisable,height;
+	id0_int_t 		i,j,least,numvisable,height;
 	objtype 	*obj,**vislist,*farthest;
 	memptr		shape;
-	byte		*tilespot,*visspot;
+	id0_byte_t		*tilespot,*visspot;
 
 	numvisable = 0;
 
@@ -1301,7 +1301,7 @@ void DrawScaleds (void)
 			obj->active = true;
 			TransformActor (obj);
 			if (!obj->viewheight || obj->viewheight > VIEWWIDTH)
-				continue;			// too close or far away
+				continue;			// too close or id0_far away
 
 			*vislist++ = obj;
 			numvisable++;
@@ -1348,7 +1348,7 @@ void DrawScaleds (void)
 
 void CalcTics (void)
 {
-	long	newtime,oldtimecount;
+	id0_long_t	newtime,oldtimecount;
 
 
 #ifdef PROFILE
@@ -1413,13 +1413,13 @@ void CalcTics (void)
 
 void	DrawHand (void)
 {
-	int	picnum;
+	id0_int_t	picnum;
 	memptr source;
-	unsigned dest,width,height;
+	id0_unsigned_t dest,width,height;
 
 	picnum = HAND1PICM;
 	if (gamestate.shotpower || boltsleft)
-		picnum += (((unsigned)TimeCount>>3)&1);
+		picnum += (((id0_unsigned_t)TimeCount>>3)&1);
 
 	source = grsegs[picnum];
 	dest = ylookup[VIEWHEIGHT-handheight]+12+bufferofs;
@@ -1443,7 +1443,7 @@ void	DrawHand (void)
 
 void	ThreeDRefresh (void)
 {
-	int tracedir;
+	id0_int_t tracedir;
 
 restart:
 	aborttrace = false;
@@ -1575,13 +1575,13 @@ asm	mov	al,0ch		// start address high register
 asm	out	dx,al
 asm	inc	dx
 asm	mov	al,ch
-asm	out	dx,al   	// set the high byte
+asm	out	dx,al   	// set the high id0_byte_t
 asm	dec	dx
 asm	mov	al,0dh		// start address low register
 asm	out	dx,al
 asm	inc	dx
 asm	mov	al,cl
-asm	out	dx,al		// set the low byte
+asm	out	dx,al		// set the low id0_byte_t
 asm	sti
 
 	displayofs = bufferofs;
