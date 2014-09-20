@@ -1,0 +1,14 @@
+- Some resources are found in external files, e.g., EGAdict in c3dedict.obj
+(assuming GRHEADERLINKED is defined and GRMODE == EGAGR).
+
+- Currently it looks like id_ca.c:EGAdict is a 8-bit unsigned int (a byte)
+from another place, but its ADDRESS actually casted to a huffnode ptr in the
+case above. Guess the value isn't important, but it should've still been
+declared as *some* variable.
+
+- Support file opening with O_TEXT (otherwise O_BINARY is always used)?
+Used in (id_ca.c) debughandle, profilehandle
+and (id_us.c) in case HELPTEXTLINKED is *not* defined, textual files.
+
+* At first, we may need to define HELPTEXTLINKED (for different reasons).
+* O_TEXT and O_BINARY aren't recognized on Unix, because newlines are LFs.

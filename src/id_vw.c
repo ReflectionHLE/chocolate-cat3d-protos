@@ -18,7 +18,8 @@
 
 // ID_VW.C
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
+#include "id_rf.h" // Required for CGA, probably because it's unused in Cat3D
 
 /*
 =============================================================================
@@ -50,7 +51,8 @@ id0_unsigned_t	pansx,pansy;	// panning adjustments inside port in screen
 							// block limited pixel values (ie 0/8 for ega x)
 id0_unsigned_t	panadjust;		// panx/pany adjusted by screen resolution
 
-id0_unsigned_t	screenseg;		// normally 0xa000 / 0xb800
+//id0_unsigned_t	screenseg;		// normally 0xa000 / 0xb800
+id0_byte_t	*screenseg;
 id0_unsigned_t	linewidth;
 id0_unsigned_t	ylookup[VIRTUALHEIGHT];
 
@@ -103,7 +105,8 @@ void	VW_Startup (void)
 {
 	id0_int_t i;
 
-	asm	cld;
+	// Originally used for certain ASM code loops (clears direction flag)
+	//asm cld;
 
 	videocard = 0;
 
@@ -130,7 +133,8 @@ Quit ("Improper video card!  If you really have an EGA/VGA card that I am not \n
 	if (videocard < CGAcard || videocard > VGAcard)
 Quit ("Improper video card!  If you really have a CGA card that I am not \n"
 	  "detecting, use the -HIDDENCARD command line parameter!");
-	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
+	MM_GetPtr ((memptr *)&screenseg,0x10000l);	// grab 64k for floating screen
+	//MM_GetPtr (&(memptr)screenseg,0x10000l);
 #endif
 
 	cursorvisible = 0;
@@ -169,17 +173,18 @@ void VW_SetScreenMode (id0_int_t grmode)
 {
 	switch (grmode)
 	{
-	  case TEXTGR:  _AX = 3;
-		  geninterrupt (0x10);
-		  screenseg=0xb000;
-		  break;
-	  case CGAGR: _AX = 4;
-		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
-		  break;
-	  case EGAGR: _AX = 0xd;
-		  geninterrupt (0x10);
-		  screenseg=0xa000;
-		  break;
+	  case TEXTGR:
+		BE_SDL_SetScreenMode(3);
+		screenseg=BE_SDL_GetTextModeMemoryPtr();
+		break;
+	  case CGAGR:
+		BE_SDL_SetScreenMode(4);
+		// screenseg is actually a main mem buffer
+		break;
+	  case EGAGR:
+		BE_SDL_SetScreenMode(0xd);
+		screenseg=BE_SDL_GetEGAMemoryPtr();
+		break;
 #ifdef VGAGAME
 	  case VGAGR:{
 		  id0_char_t extern VGAPAL;	// deluxepaint vga pallet .OBJ file
@@ -218,10 +223,7 @@ id0_char_t colors[7][17]=
 
 void VW_ColorBorder (id0_int_t color)
 {
-	_AH=0x10;
-	_AL=1;
-	_BH=color;
-	geninterrupt (0x10);
+	BE_SDL_SetBorderColor(color);
 	bordercolor = color;
 }
 
@@ -328,7 +330,7 @@ void VW_FadeDown(void)
 #endif
 }
 
-
+#if 0
 /*
 ========================
 =
@@ -358,7 +360,7 @@ void VW_SetAtrReg (id0_int_t reg, id0_int_t value)
   asm	out	dx,al
   asm	sti
 }
-
+#endif
 
 
 //===========================================================================
@@ -416,6 +418,9 @@ asm	out	dx,ax
 void VW_SetSplitScreen (id0_int_t linenum)
 {
 	VW_WaitVBL (1);
+	// TODO (Chocolate Cat3D): EGA/VGA IMPLEMENT!
+	// (Even while in CGA mode in EGA/VGA?)
+#if 0
 	if (videocard==VGAcard)
 		linenum=linenum*2-1;
 	outportb (CRTC_INDEX,CRTC_LINECOMPARE);
@@ -427,6 +432,7 @@ void VW_SetSplitScreen (id0_int_t linenum)
 		outportb (CRTC_INDEX,CRTC_MAXSCANLINE);
 		outportb (CRTC_INDEX+1,inportb(CRTC_INDEX+1) & (255-64));
 	}
+#endif
 }
 
 //===========================================================================
@@ -446,12 +452,8 @@ void	VW_ClearVideo (id0_int_t color)
 	EGAMAPMASK(15);
 #endif
 
-asm	mov	es,[screenseg]
-asm	xor	di,di
-asm	mov	cx,0xffff
-asm	mov	al,[BYTE PTR color]
-asm	rep	stosb
-asm	stosb
+	// TODO (CHOCO CAT3D): POSSIBLY ADD DIFFERENT IMPLEMENTATION FOR EGA?
+	memset(screenseg, color, 0xffff);
 
 #if GRMODE == EGAGR
 	EGAWRITEMODE(0);
@@ -697,7 +699,8 @@ done:
 id0_unsigned_char_t pixmask[4] = {0xc0,0x30,0x0c,0x03};
 id0_unsigned_char_t leftmask[4] = {0xff,0x3f,0x0f,0x03};
 id0_unsigned_char_t rightmask[4] = {0xc0,0xf0,0xfc,0xff};
-id0_unsigned_char_t colorbyte[4] = {0,0x55,0xaa,0xff};
+// Already implemented in id_vw_ac.c
+extern id0_unsigned_char_t colorbyte[4];
 
 //
 // could be optimized for rep stosw
@@ -717,62 +720,39 @@ void VW_Hlin(id0_unsigned_t xl, id0_unsigned_t xh, id0_unsigned_t y, id0_unsigne
 
 	mid = xhb-xlb-1;
 	dest = bufferofs+ylookup[y]+xlb;
-asm	mov	es,[screenseg]
 
 	if (xlb==xhb)
 	{
-	//
-	// entire line is in one id0_byte_t
-	//
+		//
+		// entire line is in one byte
+		//
 		maskleft&=maskright;
-
-		asm	mov	ah,[maskleft]
-		asm	mov	bl,[BYTE PTR color]
-		asm	and	bl,[maskleft]
-		asm	not	ah
-
-		asm	mov	di,[dest]
-
-		asm	mov	al,[es:di]
-		asm	and	al,ah			// mask out pixels
-		asm	or	al,bl			// or in color
-		asm	mov	[es:di],al
+		// mask out pixels; 'or' in color
+		screenseg[dest] = (screenseg[dest] & ~maskleft) | ((id0_byte_t)color & maskleft);
 		return;
 	}
 
-asm	mov	di,[dest]
-asm	mov	bh,[BYTE PTR color]
+	//
+	// draw left side
+	//
 
-//
-// draw left side
-//
-asm	mov	ah,[maskleft]
-asm	mov	bl,bh
-asm	and	bl,[maskleft]
-asm	not	ah
-asm	mov	al,[es:di]
-asm	and	al,ah			// mask out pixels
-asm	or	al,bl			// or in color
-asm	stosb
+	// mask out pixels; 'or' in color
+	screenseg[dest] = (screenseg[dest] & ~maskleft) | ((id0_byte_t)color & maskleft);
+	++dest;
 
-//
-// draw middle
-//
-asm	mov	al,bh
-asm	mov	cx,[mid]
-asm	rep	stosb
+	//
+	// draw middle
+	//
 
-//
-// draw right side
-//
-asm	mov	ah,[maskright]
-asm	mov	bl,bh
-asm	and	bl,[maskright]
-asm	not	ah
-asm	mov	al,[es:di]
-asm	and	al,ah			// mask out pixels
-asm	or	al,bl			// or in color
-asm	stosb
+	memset(&screenseg[dest], color, mid);
+	dest += mid;
+
+	//
+	// draw right side
+	//
+
+	// mask out pixels; 'or' in color
+	screenseg[dest] = (screenseg[dest] & ~maskright) | ((id0_byte_t)color & maskright);
 }
 #endif
 
@@ -961,6 +941,37 @@ void VW_CGAFullUpdate (void)
 
 	displayofs = bufferofs+panadjust;
 
+	BE_SDL_UpdateCGAGraphics(&screenseg[displayofs]);
+
+	uint8_t *srcPtr = &screenseg[displayofs];
+	uint8_t *destPtr = BE_SDL_GetCGAMemoryPtr();
+
+	id0_unsigned_t linePairsToCopy = 100; // pairs of scan lines to copy
+
+	do
+	{
+		memcpy(destPtr, srcPtr, 80);
+		srcPtr += linewidth;
+		destPtr += 0x2000; // go to the interlaced bank
+
+		memcpy(destPtr, srcPtr, 80);
+		srcPtr += linewidth;
+		destPtr -= (0x2000 - 80); // go to the non interlaced bank
+	} while (--linePairsToCopy);
+
+	// clear out the update matrix
+	memset(baseupdateptr, 0, UPDATEWIDE*UPDATEHIGH);
+
+	updateptr = baseupdateptr;
+	*(id0_unsigned_t *)(updateptr + UPDATEWIDE*PORTTILESHIGH) = UPDATETERMINATE;
+
+#if 0
+	id0_byte_t	*update;
+	id0_boolean_t	halftile;
+	id0_unsigned_t	x,y,middlerows,middlecollumns;
+
+	displayofs = bufferofs+panadjust;
+
 asm	mov	ax,0xb800
 asm	mov	es,ax
 
@@ -1028,6 +1039,7 @@ asm	rep	stosw
 
 	updateptr = baseupdateptr;
 	*(id0_unsigned_t *)(updateptr + UPDATEWIDE*PORTTILESHIGH) = UPDATETERMINATE;
+#endif
 }
 
 

@@ -44,7 +44,13 @@
 //                      window
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
+
+// FIXME (Chocolate Cat3D): Is that good?
+#ifndef O_BINARY
+#define O_BINARY 0 // For Unix
+#endif
+
 
 #pragma hdrstop
 
@@ -99,6 +105,8 @@ static  id0_boolean_t         US_Started;
 
 //      Public routines
 
+#if 0 // USL_HardError IS UNUSED NOW
+
 ///////////////////////////////////////////////////////////////////////////
 //
 //      USL_HardError() - Handles the Abort/Retry/Fail sort of errors passed
@@ -113,6 +121,7 @@ USL_HardError(id0_word_t errval,id0_int_t ax,id0_int_t bp,id0_int_t si)
 #define IGNORE  0
 #define RETRY   1
 #define ABORT   2
+
 extern  void    ShutdownId(void);
 
 static  id0_char_t            buf[32];
@@ -151,7 +160,8 @@ static  WindowRec       wr;
 	VW_UpdateScreen();
 	IN_ClearKeysDown();
 
-asm     sti     // Let the keyboard interrupts come through
+//asm     sti     // Let the keyboard interrupts come through
+	BE_SDL_PollEvents();
 
 	while (true)
 	{
@@ -188,6 +198,8 @@ oh_kill_me:
 }
 #pragma warn    +par
 #pragma warn    +rch
+
+#endif // USL_HardError IS UNUSED NOW
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -294,7 +306,7 @@ USL_WriteConfig(void)
 
 	version = ConfigVersion;
 	file = open("CONFIG."EXTENSION,O_CREAT | O_BINARY | O_WRONLY,
-				S_IREAD | S_IWRITE | S_IFREG);
+				/*S_IREAD | S_IWRITE*/ S_IRGRP | S_IWGRP /*| S_IFREG*/);
 	if (file != -1)
 	{
 		write(file,EXTENSION,sizeof(EXTENSION));
@@ -379,7 +391,7 @@ US_Startup(void)
 	if (US_Started)
 		return;
 
-	harderr(USL_HardError); // Install the fatal error handler
+	//harderr(USL_HardError); // Install the fatal error handler
 
 	US_InitRndT(true);              // Initialize the random number generator
 
@@ -500,6 +512,8 @@ USL_ScreenDraw(id0_word_t x,id0_word_t y,id0_char_t *s,id0_byte_t attr)
 static void
 USL_ClearTextScreen(void)
 {
+	// TODO (Chocolate Cat3D): IMPLEMENT!
+#if 0
 	// Set to 80x25 color text mode
 	_AL = 3;                                // Mode 3
 	_AH = 0x00;
@@ -512,6 +526,7 @@ USL_ClearTextScreen(void)
 	_DH = 24;                               // Bottom row
 	_AH = 0x02;
 	geninterrupt(0x10);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1127,7 +1142,7 @@ US_LineInput(id0_int_t x,id0_int_t y,id0_char_t *buf,id0_char_t *def,id0_boolean
 	cursormoved = redraw = true;
 
 	cursorvis = done = false;
-	lasttime = TimeCount;
+	lasttime = SD_GetTimeCount();
 	LastASCII = key_None;
 	LastScan = sc_None;
 
@@ -1136,15 +1151,16 @@ US_LineInput(id0_int_t x,id0_int_t y,id0_char_t *buf,id0_char_t *def,id0_boolean
 		if (cursorvis)
 			USL_XORICursor(x,y,s,cursor);
 
-	asm     pushf
-	asm     cli
+//	asm     pushf
+//	asm     cli
+		BE_SDL_PollEvents();
 
 		sc = LastScan;
 		LastScan = sc_None;
 		c = LastASCII;
 		LastASCII = key_None;
 
-	asm     popf
+//	asm     popf
 
 		switch (sc)
 		{
@@ -1253,13 +1269,13 @@ US_LineInput(id0_int_t x,id0_int_t y,id0_char_t *buf,id0_char_t *def,id0_boolean
 		if (cursormoved)
 		{
 			cursorvis = false;
-			lasttime = TimeCount - TickBase;
+			lasttime = SD_GetTimeCount() - TickBase;
 
 			cursormoved = false;
 		}
-		if (TimeCount - lasttime > TickBase / 2)
+		if (SD_GetTimeCount() - lasttime > TickBase / 2)
 		{
-			lasttime = TimeCount;
+			lasttime = SD_GetTimeCount();
 
 			cursorvis ^= true;
 		}

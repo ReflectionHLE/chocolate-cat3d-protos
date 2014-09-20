@@ -112,14 +112,6 @@ typedef	id0_byte_t		ScanCode;
 #define	key_Tab			0x09
 #define	key_Delete		0x7f
 
-// 	Stuff for the mouse
-#define	MReset		0
-#define	MButtons	3
-#define	MDelta		11
-
-#define	MouseInt	0x33
-#define	Mouse(x)	_AX = x,geninterrupt(MouseInt)
-
 typedef	enum		{
 						demo_Off,demo_Record,demo_Playback,demo_PlayDone
 					} Demo;

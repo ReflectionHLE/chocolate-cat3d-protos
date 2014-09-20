@@ -45,7 +45,12 @@
 
 // DEBUG - handle LPT3 for Sound Source
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
+
+// FIXME (Chocolate Cat3D): Is that good?
+#ifndef O_BINARY
+#define O_BINARY 0 // For Unix
+
 
 #define CTL_M_ADLIBUPPIC        CTL_S_ADLIBUPPIC
 #define CTL_M_ADLIBDNPIC        CTL_S_ADLIBDNPIC
@@ -129,6 +134,8 @@ static  HighScore       Scores[MaxScores] =
 
 //      Public routines
 
+#if 0 // USL_HardError IS UNUSED NOW
+
 ///////////////////////////////////////////////////////////////////////////
 //
 //      USL_HardError() - Handles the Abort/Retry/Fail sort of errors passed
@@ -185,7 +192,8 @@ static  id0_boolean_t         oldleavedriveon;
 	VW_UpdateScreen();
 	IN_ClearKeysDown();
 
-asm     sti     // Let the keyboard interrupts come through
+//asm     sti     // Let the keyboard interrupts come through
+	BE_SDL_PollEvents();
 
 	while (true)
 	{
@@ -223,6 +231,8 @@ oh_kill_me:
 }
 #pragma warn    +par
 #pragma warn    +rch
+
+#endif // USL_HardError IS UNUSED NOW
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -314,7 +324,7 @@ USL_WriteConfig(void)
 	int     file;
 
 	file = open("CONFIG."EXTENSION,O_CREAT | O_BINARY | O_WRONLY,
-				S_IREAD | S_IWRITE | S_IFREG);
+				/*S_IREAD | S_IWRITE*/ S_IRGRP | S_IWGRP /*| S_IFREG*/);
 	if (file != -1)
 	{
 		write(file,Scores,sizeof(HighScore) * MaxScores);
@@ -382,7 +392,7 @@ US_Startup(void)
 	if (US_Started)
 		return;
 
-	harderr(USL_HardError); // Install the fatal error handler
+	//harderr(USL_HardError); // Install the fatal error handler
 
 	US_InitRndT(true);              // Initialize the random number generator
 
@@ -482,6 +492,8 @@ USL_ScreenDraw(id0_word_t x,id0_word_t y,id0_char_t *s,id0_byte_t attr)
 static void
 USL_ClearTextScreen(void)
 {
+	// TODO (Chocolate Cat3D): IMPLEMENT!
+#if 0
 	// Set to 80x25 color text mode
 	_AL = 3;                                // Mode 3
 	_AH = 0x00;
@@ -494,6 +506,7 @@ USL_ClearTextScreen(void)
 	_DH = 24;                               // Bottom row
 	_AH = 0x02;
 	geninterrupt(0x10);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1089,15 +1102,16 @@ US_LineInput(id0_int_t x,id0_int_t y,id0_char_t *buf,id0_char_t *def,id0_boolean
 		if (cursorvis)
 			USL_XORICursor(x,y,s,cursor);
 
-	asm     pushf
-	asm     cli
+//	asm     pushf
+//	asm     cli
+		BE_SDL_PollEvents();
 
 		sc = LastScan;
 		LastScan = sc_None;
 		c = LastASCII;
 		LastASCII = key_None;
 
-	asm     popf
+//	asm     popf
 
 		switch (sc)
 		{
@@ -2124,11 +2138,12 @@ USL_CtlCKbdButtonCustom(UserCall call,id0_word_t i,id0_word_t n)
 			break;
 		}
 
-		asm     pushf
-		asm     cli
+//		asm     pushf
+//		asm     cli
+		BE_SDL_PollEvents();
 		if (LastScan == sc_LShift)
 			LastScan = sc_None;
-		asm     popf
+//		asm     popf
 	} while (!(scan = LastScan));
 	IN_ClearKey(scan);
 	if (scan != sc_Escape)
@@ -2834,7 +2849,7 @@ USL_CtlDSButtonCustom(UserCall call,id0_word_t i,id0_word_t n)
 		filename = USL_GiveSaveName(n / 2);
 		err = 0;
 		file = open(filename,O_CREAT | O_BINARY | O_WRONLY,
-					S_IREAD | S_IWRITE | S_IFREG);
+					/*S_IREAD | S_IWRITE*/ S_IRGRP | S_IWGRP /*| S_IFREG*/);
 		if (file != -1)
 		{
 			if (write(file,game,sizeof(*game)) == sizeof(*game))

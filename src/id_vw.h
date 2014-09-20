@@ -23,11 +23,11 @@
 #endif
 
 #ifndef __ID_MM__
-#include "ID_MM.H"
+#include "id_mm.h"
 #endif
 
 #ifndef __ID_GLOB__
-#include "ID_GLOB.H"
+#include "id_glob.h"
 #endif
 
 #define __ID_VW__
@@ -204,7 +204,8 @@ extern	id0_unsigned_t	panx,pany;		// panning adjustments inside port in pixels
 extern	id0_unsigned_t	pansx,pansy;
 extern	id0_unsigned_t	panadjust;		// panx/pany adjusted by screen resolution
 
-extern	id0_unsigned_t	screenseg;		// normally 0xa000 or buffer segment
+extern  id0_byte_t     *screenseg;
+//extern	id0_unsigned_t	screenseg;		// normally 0xa000 or buffer segment
 
 extern	id0_unsigned_t	linewidth;
 extern	id0_unsigned_t	ylookup[VIRTUALHEIGHT];
@@ -228,6 +229,7 @@ extern	id0_int_t			bordercolor;
 
 extern	id0_unsigned_t	*shifttabletable[8];
 extern	id0_unsigned_t	bufferwidth,bufferheight,screenspot;	// used by font drawing stuff
+extern	id0_unsigned_t	linedelta;
 
 
 
@@ -264,7 +266,7 @@ void	VW_FadeIn(void);
 void	VW_FadeUp(void);
 void	VW_FadeDown(void);
 
-void	VW_SetAtrReg (id0_int_t reg, id0_int_t value);
+//void	VW_SetAtrReg (id0_int_t reg, id0_int_t value);
 
 //
 // block primitives

@@ -1,6 +1,0 @@
-- Support file opening with O_TEXT (otherwise O_BINARY is always used)?
-Used in (id_ca.c) debughandle, profilehandle
-and (id_us.c) in case HELPTEXTLINKED is *not* defined, textual files.
-
-* At first, we may need to define HELPTEXTLINKED (for different reasons).
-* O_TEXT and O_BINARY aren't recognized on Unix, because there isn't a different

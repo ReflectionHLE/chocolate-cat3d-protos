@@ -1,0 +1,184 @@
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 0 has invalid symbol index 11
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 1 has invalid symbol index 12
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 2 has invalid symbol index 2
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 3 has invalid symbol index 2
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 4 has invalid symbol index 11
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 5 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 6 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 7 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 8 has invalid symbol index 12
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 9 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 10 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 11 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 12 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 13 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 14 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 15 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 16 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 17 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 18 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 19 has invalid symbol index 21
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_line): relocation 0 has invalid symbol index 2
+/usr/lib/gcc/x86_64-linux-gnu/4.8/../../../x86_64-linux-gnu/crt1.o: In function `_start':
+(.text+0x20): undefined reference to `main'
+obj/id_ca.o: In function `CA_FarRead':
+id_ca.c:(.text+0x3cb): undefined reference to `Quit'
+obj/id_ca.o: In function `CA_FarWrite':
+id_ca.c:(.text+0x43b): undefined reference to `Quit'
+obj/id_ca.o: In function `CA_ReadFile':
+id_ca.c:(.text+0x483): undefined reference to `filelength'
+obj/id_ca.o: In function `CA_LoadFile':
+id_ca.c:(.text+0x4e9): undefined reference to `filelength'
+obj/id_ca.o: In function `CAL_SetupGrFile':
+id_ca.c:(.text+0x805): undefined reference to `CGAhead'
+id_ca.c:(.text+0x812): undefined reference to `CGAdict'
+id_ca.c:(.text+0x817): undefined reference to `FP_SEG'
+id_ca.c:(.text+0x97e): undefined reference to `Quit'
+obj/id_ca.o: In function `CAL_SetupMapFile':
+id_ca.c:(.text+0x995): undefined reference to `maphead'
+id_ca.c:(.text+0x99c): undefined reference to `FP_SEG'
+obj/id_ca.o: In function `CAL_SetupAudioFile':
+id_ca.c:(.text+0x9e5): undefined reference to `audiohead'
+id_ca.c:(.text+0x9f2): undefined reference to `audiodict'
+id_ca.c:(.text+0x9f7): undefined reference to `FP_SEG'
+obj/id_ca.o: In function `CA_CacheMap':
+id_ca.c:(.text+0x129b): undefined reference to `Quit'
+obj/id_ca.o: In function `CA_UpLevel':
+id_ca.c:(.text+0x12da): undefined reference to `Quit'
+obj/id_ca.o: In function `CA_DownLevel':
+id_ca.c:(.text+0x17e5): undefined reference to `Quit'
+obj/id_ca.o: In function `CAL_SetupMapFile':
+id_ca.c:(.text+0x9da): undefined reference to `Quit'
+obj/id_ca.o: In function `CAL_SetupAudioFile':
+id_ca.c:(.text+0xa3a): undefined reference to `Quit'
+obj/id_in.o: In function `IN_Startup':
+id_in.c:(.text+0x351): undefined reference to `_argc'
+id_in.c:(.text+0x373): undefined reference to `_argv'
+id_in.c:(.text+0x398): undefined reference to `_argc'
+obj/id_in.o: In function `IN_ReadControl':
+id_in.c:(.text+0x856): undefined reference to `Quit'
+id_in.c:(.text+0x8fe): undefined reference to `Quit'
+obj/id_mm.o: In function `MML_UseSpace':
+id_mm.c:(.text+0x1ea): undefined reference to `Quit'
+obj/id_mm.o: In function `MM_SetPurge':
+id_mm.c:(.text+0x259): undefined reference to `Quit'
+obj/id_mm.o: In function `MM_SetLock':
+id_mm.c:(.text+0x2d9): undefined reference to `Quit'
+obj/id_mm.o: In function `MM_SortMem':
+id_mm.c:(.text+0x475): undefined reference to `movedata'
+id_mm.c:(.text+0x497): undefined reference to `movedata'
+obj/id_mm.o: In function `MM_Startup':
+id_mm.c:(.text+0x7aa): undefined reference to `_argc'
+id_mm.c:(.text+0x7c8): undefined reference to `_argc'
+id_mm.c:(.text+0x7d5): undefined reference to `_argv'
+id_mm.c:(.text+0x7f2): undefined reference to `_argc'
+id_mm.c:(.text+0x818): undefined reference to `_argc'
+id_mm.c:(.text+0x821): undefined reference to `_argv'
+obj/id_mm.o: In function `MM_ShowMemory':
+id_mm.c:(.text+0x95a): undefined reference to `Quit'
+obj/id_mm.o: In function `MML_ClearBlock':
+id_mm.c:(.text+0xc6): undefined reference to `Quit'
+obj/id_mm.o: In function `MM_GetPtr':
+id_mm.c:(.text+0x6c2): undefined reference to `Quit'
+obj/id_rf.o: In function `RF_Startup':
+id_rf.c:(.text+0x1dd): undefined reference to `_argc'
+id_rf.c:(.text+0x1f8): undefined reference to `_argc'
+id_rf.c:(.text+0x201): undefined reference to `_argv'
+obj/id_rf.o: In function `RF_MarkTileGraphics':
+id_rf.c:(.text+0x526): undefined reference to `itoa'
+id_rf.c:(.text+0x544): undefined reference to `Quit'
+id_rf.c:(.text+0x756): undefined reference to `itoa'
+id_rf.c:(.text+0x774): undefined reference to `Quit'
+id_rf.c:(.text+0x80b): undefined reference to `Quit'
+id_rf.c:(.text+0x82d): undefined reference to `Quit'
+obj/id_rf.o: In function `RFL_CheckForAnimTile':
+id_rf.c:(.text+0xa0a): undefined reference to `Quit'
+id_rf.c:(.text+0xa2a): undefined reference to `Quit'
+obj/id_rf.o:id_rf.c:(.text+0xcb4): more undefined references to `Quit' follow
+obj/id_rf.o: In function `RF_PlaceSprite':
+id_rf.c:(.text+0x1fb5): undefined reference to `itoa'
+id_rf.c:(.text+0x1fd3): undefined reference to `Quit'
+id_rf.c:(.text+0x1ffe): undefined reference to `Quit'
+obj/id_rf.o: In function `RF_SetScrollBlock.part.0':
+id_rf.c:(.text+0x2e): undefined reference to `Quit'
+obj/id_rf.o: In function `RF_SetScrollBlock':
+id_rf.c:(.text+0xe2e): undefined reference to `Quit'
+obj/id_sd.o: In function `SD_PlaySound':
+id_sd.c:(.text+0x52f): undefined reference to `Quit'
+obj/id_sd.o:id_sd.c:(.text+0x596): more undefined references to `Quit' follow
+obj/id_sd.o: In function `SD_Startup':
+id_sd.c:(.text+0x90f): undefined reference to `_argc'
+id_sd.c:(.text+0x933): undefined reference to `_argv'
+id_sd.c:(.text+0x95d): undefined reference to `_argc'
+obj/id_us_1.o: In function `USL_Show':
+id_us_1.c:(.text+0xd1): undefined reference to `MK_FP'
+id_us_1.c:(.text+0xf3): undefined reference to `introscn'
+obj/id_us_1.o: In function `USL_ScreenDraw':
+id_us_1.c:(.text+0x181): undefined reference to `MK_FP'
+id_us_1.c:(.text+0x19c): undefined reference to `introscn'
+obj/id_us_1.o: In function `USL_ShowMem.constprop.0':
+id_us_1.c:(.text+0x20a): undefined reference to `ltoa'
+obj/id_us_1.o: In function `US_Shutdown':
+id_us_1.c:(.text+0x4a9): undefined reference to `showscorebox'
+obj/id_us_1.o: In function `US_Startup':
+id_us_1.c:(.text+0x750): undefined reference to `showscorebox'
+id_us_1.c:(.text+0x7b5): undefined reference to `showscorebox'
+id_us_1.c:(.text+0x7de): undefined reference to `_argc'
+id_us_1.c:(.text+0x7e5): undefined reference to `_argv'
+obj/id_us_1.o: In function `US_TextScreen':
+id_us_1.c:(.text+0x874): undefined reference to `MK_FP'
+id_us_1.c:(.text+0x880): undefined reference to `introscn'
+id_us_1.c:(.text+0x887): undefined reference to `_fmemcpy'
+id_us_1.c:(.text+0x88e): undefined reference to `_argc'
+id_us_1.c:(.text+0x89b): undefined reference to `_argv'
+id_us_1.c:(.text+0x8eb): undefined reference to `tedlevel'
+id_us_1.c:(.text+0x8f3): undefined reference to `tedlevelnum'
+obj/id_us_1.o: In function `US_UpdateTextScreen':
+id_us_1.c:(.text+0xc23): undefined reference to `MK_FP'
+id_us_1.c:(.text+0xc28): undefined reference to `introscn'
+id_us_1.c:(.text+0xc3d): undefined reference to `introscn'
+id_us_1.c:(.text+0xc47): undefined reference to `introscn'
+obj/id_us_1.o: In function `US_FinishTextScreen':
+id_us_1.c:(.text+0xc82): undefined reference to `tedlevel'
+obj/id_us_1.o: In function `US_PrintUnsigned':
+id_us_1.c:(.text+0xddd): undefined reference to `ultoa'
+obj/id_us_1.o: In function `US_PrintSigned':
+id_us_1.c:(.text+0xe2d): undefined reference to `ltoa'
+obj/id_us_1.o: In function `US_CPrintLine':
+id_us_1.c:(.text+0xf6f): undefined reference to `Quit'
+obj/id_us_2.o: In function `USL_ConfirmComm':
+id_us_2.c:(.text+0xabe): undefined reference to `Quit'
+obj/id_us_2.o: In function `USL_ScoreCustom':
+id_us_2.c:(.text+0xf1d): undefined reference to `showscorebox'
+id_us_2.c:(.text+0xf32): undefined reference to `showscorebox'
+id_us_2.c:(.text+0xf48): undefined reference to `showscorebox'
+obj/id_us_2.o: In function `USL_CompCustom':
+id_us_2.c:(.text+0xfc8): undefined reference to `showscorebox'
+obj/id_us_2.o: In function `USL_DoItem':
+id_us_2.c:(.text+0x13ae): undefined reference to `Quit'
+obj/id_us_2.o: In function `US_ControlPanel':
+id_us_2.c:(.text+0x23dd): undefined reference to `showscorebox'
+id_us_2.c:(.text+0x2660): undefined reference to `tedlevel'
+id_us_2.c:(.text+0x269a): undefined reference to `Quit'
+id_us_2.c:(.text+0x27d1): undefined reference to `HelpScreens'
+id_us_2.c:(.text+0x287e): undefined reference to `TEDDeath'
+id_us_2.c:(.text+0x28d6): undefined reference to `Quit'
+obj/id_vw.o: In function `VW_Startup':
+id_vw.c:(.text+0x2): undefined reference to `_argc'
+id_vw.c:(.text+0x28): undefined reference to `_argc'
+id_vw.c:(.text+0x31): undefined reference to `_argv'
+id_vw.c:(.text+0xa2): undefined reference to `Quit'
+obj/id_vw.o: In function `VW_CGAFullUpdate':
+id_vw.c:(.text+0x6c3): undefined reference to `BE_SDL_UpdateCGAGraphics'
+obj/be_sdl.o: In function `BE_SDL_InitAll':
+be_sdl.c:(.text+0x32): undefined reference to `CK_Cross_LogMessage'
+obj/be_sdl.o: In function `BE_SDL_ShutdownAll':
+be_sdl.c:(.text+0x47): undefined reference to `BE_SDL_ShutdownAudio'
+obj/be_sdl_audio_timer.o: In function `BE_SDL_InitAudio':
+be_sdl_audio_timer.c:(.text+0x355): undefined reference to `CK_Cross_LogMessage'
+be_sdl_audio_timer.c:(.text+0x39d): undefined reference to `CK_Cross_LogMessage'
+be_sdl_audio_timer.c:(.text+0x37e): undefined reference to `CK_Cross_LogMessage'
+obj/be_sdl_graphics.o: In function `BE_SDL_InitGfx':
+be_sdl_graphics.c:(.text+0x134): undefined reference to `CK_Cross_LogMessage'
+collect2: error: ld returned 1 exit status
+make: *** [chocolate-cat3d] Error 1

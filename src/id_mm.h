@@ -23,9 +23,9 @@
 #define __ID_CA__
 
 #define SAVENEARHEAP	0x400		// space to leave in data segment
-#define SAVEFARHEAP		0			// space to leave in id0_far heap
+#define SAVEFARHEAP		0			// space to leave in far heap
 
-#define	BUFFERSIZE		0x1000		// miscelanious, allways available buffer
+#define	BUFFERSIZE		0x1000		// miscelanious, always available buffer
 
 #define MAXBLOCKS		600
 
@@ -89,7 +89,7 @@ extern	void		(* aftersort) (void);
 
 void MM_Startup (void);
 void MM_Shutdown (void);
-void MM_MapEMS (void);
+//void MM_MapEMS (void);
 
 void MM_GetPtr (memptr *baseptr, id0_unsigned_long_t size);
 void MM_FreePtr (memptr *baseptr);

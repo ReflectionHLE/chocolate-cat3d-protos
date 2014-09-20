@@ -19,15 +19,15 @@
 // ID_CA.H
 
 #ifndef __TYPES__
-#include "ID_TYPES.H"
+#include "id_types.h"
 #endif
 
 #ifndef __ID_MM__
-#include "ID_MM.H"
+#include "id_mm.h"
 #endif
 
 #ifndef __ID_GLOB__
-#include "ID_GLOB.H"
+#include "id_glob.h"
 #endif
 
 #define __ID_CA__
@@ -83,7 +83,7 @@ extern	void	(*finishcachebox)	(void);
 
 // just for the score box reshifting
 
-void CAL_ShiftSprite (id0_unsigned_t segment,id0_unsigned_t source,id0_unsigned_t dest,
+void CAL_ShiftSprite (id0_byte_t *source, id0_byte_t *dest,
 	id0_unsigned_t width, id0_unsigned_t height, id0_unsigned_t pixshift);
 
 //===========================================================================

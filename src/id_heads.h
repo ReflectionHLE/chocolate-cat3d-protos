@@ -23,10 +23,11 @@
 #include <ctype.h>
 //#include <DOS.H>
 #include <errno.h>
-#include <fcntl.H>
+#include <fcntl.h>
 //#include <IO.H>
 //#include <MEM.H>
 //#include <PROCESS.H>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +46,10 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+
+// Command line arguments
+extern int _argc;
+extern char **_argv;
 
 typedef	bool id0_boolean_t;
 typedef int8_t id0_char_t;
@@ -88,36 +93,14 @@ typedef	struct
 
 #endif
 
-// REFERENCE: OLDER TYPES CODE (ACTUALLY GIVEN A BIT "LATER" IN THE FILE)
-#if 0
-
-typedef	enum	{false,true}	boolean;
-typedef	unsigned	char		byte;
-typedef	unsigned	int			word;
-typedef	unsigned	long		longword;
-typedef	byte *					Ptr;
-
-typedef	struct
-		{
-			int	x,y;
-		} Point;
-typedef	struct
-		{
-			Point	ul,lr;
-		} Rect;
-
-#define	nil	((void *)0)
-
-#endif
-
 //--------------------------------------------------------------------------
 
 #define	EXTENSION	"C3D"
 
 extern	id0_char_t id0_far introscn;
 
-#include "GFXE_C3D.H"
-#include "AUDIOC3D.H"
+#include "gfxe_c3d.h"
+#include "audioc3d.h"
 
 //--------------------------------------------------------------------------
 
@@ -128,7 +111,9 @@ extern	id0_char_t id0_far introscn;
 #define	EGAGR	2
 #define	VGAGR	3
 
-#define GRMODE	EGAGR
+// FIXME (Chocolate Cat3D): Hack because we begin implementing CGA first
+#define GRMODE	CGAGR
+//#define GRMODE	EGAGR
 
 #if GRMODE == EGAGR
 #define GREXT	"EGA"
@@ -139,12 +124,12 @@ extern	id0_char_t id0_far introscn;
 
 //#define PROFILE
 
-#include "ID_MM.H"
-#include "ID_CA.H"
-#include "ID_VW.H"
-#include "ID_IN.H"
-#include "ID_SD.H"
-#include "ID_US.H"
+#include "id_mm.h"
+#include "id_ca.h"
+#include "id_vw.h"
+#include "id_in.h"
+#include "id_sd.h"
+#include "id_us.h"
 
 
 void	Quit (id0_char_t *error);		// defined in user program

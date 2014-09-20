@@ -24,7 +24,13 @@
 //      Hacked up for Catacomb 3D
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
+
+// FIXME (Chocolate Cat3D): Is that good?
+#ifndef O_BINARY
+#define O_BINARY 0 // For Unix
+#endif
+
 #pragma hdrstop
 
 #pragma warn    -pia
@@ -288,7 +294,7 @@ static  id0_boolean_t USL_ConfigCustom(UserCall call,struct UserItem id0_far *it
 		{DefFolder(sc_L,"LOAD GAME",&loadgamegroup)},
 		{DefFolder(sc_S,"SAVE GAME",&savegamegroup)},
 		{DefFolder(sc_C,"CONFIGURE",&configgroup)},
-		{DefButton(sc_R,nil),uc_Return},        // Return to Game/Demo
+		{DefButton(sc_R,id0_nil_t),uc_Return},        // Return to Game/Demo
 		{DefButton(sc_E,"END GAME"),uc_Abort},
 		{DefFolder(sc_B,"SKULL 'N' BONES",&ponggroup)},
 		{DefButton(sc_Q,"QUIT"),uc_Quit},
@@ -398,7 +404,7 @@ USL_DrawCtlPanelContents(void)
 	id0_int_t                             x,y;
 	UserItem                id0_far *item;
 
-	if (topcard->custom && topcard->custom(uic_DrawCard,nil))
+	if (topcard->custom && topcard->custom(uic_DrawCard,id0_nil_t))
 		return;
 
 	if (topcard->title)
@@ -428,7 +434,7 @@ USL_DrawCtlPanelContents(void)
 		y += 8;
 	}
 	if (topcard->custom)
-		topcard->custom(uic_TouchupCard,nil);
+		topcard->custom(uic_TouchupCard,id0_nil_t);
 }
 
 static void
@@ -618,14 +624,16 @@ USL_HandleError(id0_int_t num)
 		strcat(buf,"Unknown");
 	else if (num == ENOMEM)
 		strcat(buf,"Disk is Full");
-	else if (num == EINVFMT)
+	// FIXME (Chocolate Cat3D): Is that OK?
+	else if (num == 11/*EINVFMT*/)
 		strcat(buf,"File is Incomplete");
 	else
-		strcat(buf,sys_errlist[num]);
+		strerror_r(num, buf+(strlen(buf)+1), sizeof(buf)-(strlen(buf)+1));
+		//strcat(buf,sys_errlist[num]);
 
 	VW_HideCursor();
 
-	USL_CtlDialog(buf,"PRESS ANY KEY",nil);
+	USL_CtlDialog(buf,"PRESS ANY KEY",id0_nil_t);
 	VW_UpdateScreen();
 
 	IN_ClearKeysDown();
@@ -673,7 +681,7 @@ USL_ScoreCustom(UserCall call,UserItem id0_far *item)
 
 	showscorebox ^= true;
 	USL_CtlDialog(showscorebox? "Score box now on" : "Score box now off",
-					"Press any key",nil);
+					"Press any key",id0_nil_t);
 	USL_SetOptionsText();
 	return(true);
 }
@@ -687,7 +695,7 @@ USL_CompCustom(UserCall call,UserItem id0_far *item)
 
 	compatability ^= true;
 	USL_CtlDialog(compatability? "SVGA compatibility now on" : "SVGA compatibility now off",
-					"Press any key",nil);
+					"Press any key",id0_nil_t);
 	USL_SetOptionsText();
 	return(true);
 }
@@ -702,7 +710,7 @@ USL_TwoCustom(UserCall call,UserItem id0_far *item)
 
 	oldshooting ^= true;
 	USL_CtlDialog(oldshooting? "Two-button firing now on" : "Two-button firing now off",
-					"Press any key",nil);
+					"Press any key",id0_nil_t);
 	USL_SetOptionsText();
 	return(true);
 }
@@ -748,7 +756,7 @@ USL_CKSetKey(UserItem id0_far *item,id0_word_t i)
 	fontcolor = HiliteColor;
 	do
 	{
-		if (TimeCount >= time)
+		if (SD_GetTimeCount() >= time)
 		{
 			on ^= true;
 			VWB_Bar(item->x + 90,item->y,40,8,fontcolor ^ BackColor);
@@ -757,7 +765,7 @@ USL_CKSetKey(UserItem id0_far *item,id0_word_t i)
 				VWB_DrawTile8(item->x + 90 + 16,item->y,TileBase + 8);
 			VW_UpdateScreen();
 
-			time = TimeCount + (TickBase / 2);
+			time = SD_GetTimeCount() + (TickBase / 2);
 		}
 
 		IN_ReadCursor(&cursorinfo);
@@ -767,11 +775,12 @@ USL_CKSetKey(UserItem id0_far *item,id0_word_t i)
 			LastScan = sc_Escape;
 		}
 
-	asm     pushf
-	asm     cli
+	//asm     pushf
+	//asm     cli
+	BE_SDL_PollEvents();
 		if (LastScan == sc_LShift)
 			LastScan = sc_None;
-	asm     popf
+	//asm     popf
 	} while (!(scan = LastScan));
 
 	if (scan != sc_Escape)
@@ -787,7 +796,7 @@ USL_CKSetKey(UserItem id0_far *item,id0_word_t i)
 			}
 		}
 		if (on)
-			USL_CtlDialog("Key already used","Press a key",nil);
+			USL_CtlDialog("Key already used","Press a key",id0_nil_t);
 		else
 			*(KeyMaps[i]) = scan;
 	}
@@ -873,10 +882,10 @@ USL_CJGet(id0_word_t joy,id0_word_t button,id0_word_t x,id0_word_t y,id0_word_t 
 	time = 0;
 	while (!(IN_GetJoyButtonsDB(joy) & (1 << button)))
 	{
-		if (TimeCount >= time)
+		if (SD_GetTimeCount() >= time)
 		{
 			on ^= true;
-			time = TimeCount + (TickBase / 2);
+			time = SD_GetTimeCount() + (TickBase / 2);
 			VWB_DrawTile8(x,y,TileBase + on);
 			VW_UpdateScreen();
 		}
@@ -935,7 +944,7 @@ USL_Joy1Custom(UserCall call,UserItem id0_far *item)
 		if (USL_ConfigJoystick(0))
 		{
 			Controls[0] = ctrl_Joystick1;
-			USL_CtlDialog("USING JOYSTICK #1","PRESS ANY KEY",nil);
+			USL_CtlDialog("USING JOYSTICK #1","PRESS ANY KEY",id0_nil_t);
 		}
 		return(true);
 	}
@@ -952,7 +961,7 @@ USL_Joy2Custom(UserCall call,UserItem id0_far *item)
 		if (USL_ConfigJoystick(1))
 		{
 			Controls[0] = ctrl_Joystick2;
-			USL_CtlDialog("USING JOYSTICK #2","PRESS ANY KEY",nil);
+			USL_CtlDialog("USING JOYSTICK #2","PRESS ANY KEY",id0_nil_t);
 		}
 		return(true);
 	}
@@ -1087,7 +1096,7 @@ USL_DoSaveGame(UserItem id0_far *item)
 	VWB_Bar(item->x + 1,item->y + 2,CtlPanelW - 12 - 2,7,BackColor);
 	game->oldtest = &PrintX;
 	ok = US_LineInput(item->x + 2,item->y + 2,
-						game->name,game->present? game->name : nil,
+						game->name,game->present? game->name : id0_nil_t,
 						true,MaxGameName,
 						CtlPanelW - 22);
 	if (!strlen(game->name))
@@ -1099,7 +1108,7 @@ USL_DoSaveGame(UserItem id0_far *item)
 		filename = USL_GiveSaveName(n);
 		err = 0;
 		file = open(filename,O_CREAT | O_BINARY | O_WRONLY,
-					S_IREAD | S_IWRITE | S_IFREG);
+					/*S_IREAD | S_IWRITE*/ S_IRGRP | S_IWGRP /*| S_IFREG*/);
 		if (file != -1)
 		{
 			if (write(file,game,sizeof(*game)) == sizeof(*game))
@@ -1201,7 +1210,7 @@ USL_PlayPong(void)
 	lastscore = false;
 	do
 	{
-		waittime = TimeCount;
+		waittime = SD_GetTimeCount();
 
 		IN_ReadCursor(&cursorinfo);
 		if (((cursorinfo.x < 0) || IN_KeyDown(sc_LeftArrow)) && (kx > PaddleMinX))
@@ -1212,7 +1221,7 @@ USL_PlayPong(void)
 		if (killball)
 		{
 			ball = false;
-			balltime = TimeCount + TickBase;
+			balltime = SD_GetTimeCount() + TickBase;
 			speedup = 10;
 			killball = false;
 		}
@@ -1256,7 +1265,7 @@ USL_PlayPong(void)
 				USL_DrawPongScore(kscore,cscore);
 				if (cscore == 21)
 				{
-					USL_CtlDialog("You lost!","Press any key",nil);
+					USL_CtlDialog("You lost!","Press any key",id0_nil_t);
 					done = true;
 					continue;
 				}
@@ -1270,7 +1279,7 @@ USL_PlayPong(void)
 				USL_DrawPongScore(kscore,cscore);
 				if (kscore == 21)
 				{
-					USL_CtlDialog("You won!","Press any key",nil);
+					USL_CtlDialog("You won!","Press any key",id0_nil_t);
 					done = true;
 					continue;
 				}
@@ -1319,7 +1328,7 @@ USL_PlayPong(void)
 			}
 			VWB_DrawSprite(x,y,(x & 1)? BALL1PIXELTOTHERIGHTSPR : BALLSPR);
 		}
-		else if (TimeCount >= balltime)
+		else if (SD_GetTimeCount() >= balltime)
 		{
 			ball = true;
 			bdx = 1 - (US_RndT() % 3);
@@ -1330,7 +1339,7 @@ USL_PlayPong(void)
 			by = (BallMinY + ((BallMaxY - BallMinY) / 2)) << 2;
 		}
 		VW_UpdateScreen();
-		while (waittime == TimeCount)
+		while (waittime == SD_GetTimeCount())
 			;       // DEBUG - do adaptiveness
 	} while ((LastScan != sc_Escape) && !done);
 	IN_ClearKeysDown();
@@ -1461,7 +1470,7 @@ USL_DownLevel(UserItemGroup id0_far *group)
 	if (!group)
 		Quit("USL_DownLevel() - nil card");
 	USL_PushCard(group);
-	if (group->custom && group->custom(uic_SetupCard,nil))
+	if (group->custom && group->custom(uic_SetupCard,id0_nil_t))
 		USL_PopCard();
 	USL_SetupCard();
 }
@@ -1650,7 +1659,7 @@ USL_TearDownCtlPanel(void)
 			US_PrintCentered("Quitting...");
 			fontcolor = F_BLACK;
 			VW_UpdateScreen();
-			Quit(nil);
+			Quit(id0_nil_t);
 		}
 	}
 
@@ -1704,11 +1713,11 @@ extern void HelpScreens(void);
 
 		if (resetitem)
 		{
-			flashtime = TimeCount + (TickBase / 2);
+			flashtime = SD_GetTimeCount() + (TickBase / 2);
 			resetitem = false;
 		}
 
-		if (TimeCount >= flashtime)
+		if (SD_GetTimeCount() >= flashtime)
 		{
 			on ^= true;
 			resetitem = true;

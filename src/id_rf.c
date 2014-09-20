@@ -32,7 +32,9 @@ updated
 =============================================================================
 */
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
+#include "id_rf.h" // Had to add it, probably because it's unused in Cat3D
+#include "id_asm.h" // Also required for a few macros
 #pragma hdrstop
 
 /*
@@ -54,7 +56,7 @@ updated
 // up two two tiles each way
 //
 // (PORTTILESWIDE+1)*PORTTILESHIGH must be even so the arrays can be cleared
-// by id0_word_t width instructions
+// by 16-bit word width instructions
 
 #define	UPDATESCREENSIZE	(UPDATEWIDE*PORTTILESHIGH+2)
 #define	UPDATESPARESIZE		(UPDATEWIDE*2+4)
@@ -432,7 +434,7 @@ void RF_NewMap (void)
 	RF_SetScrollBlock (mapwidth-MAPBORDER,0,false);
 
 
-	lasttimecount = TimeCount;		// setup for adaptive timing
+	lasttimecount = SD_GetTimeCount();		// setup for adaptive timing
 	tics = 1;
 }
 
@@ -1439,8 +1441,8 @@ void RF_CalcTics (void)
 //
 // calculate tics since last refresh for adaptive timing
 //
-	if (lasttimecount > TimeCount)
-		TimeCount = lasttimecount;		// if the game was paused a LONG time
+	if (lasttimecount > SD_GetTimeCount())
+		SD_SetTimeCount(lasttimecount);		// if the game was paused a LONG time
 
 	if (DemoMode)					// demo recording and playback needs
 	{								// to be constant
@@ -1448,10 +1450,10 @@ void RF_CalcTics (void)
 // take DEMOTICS or more tics, and modify Timecount to reflect time taken
 //
 		oldtimecount = lasttimecount;
-		while (TimeCount<oldtimecount+DEMOTICS*2)
+		while (SD_GetTimeCount()<oldtimecount+DEMOTICS*2)
 		;
 		lasttimecount = oldtimecount + DEMOTICS;
-		TimeCount = lasttimecount + DEMOTICS;
+		SD_SetTimeCount(lasttimecount + DEMOTICS);
 		tics = DEMOTICS;
 	}
 	else
@@ -1461,7 +1463,7 @@ void RF_CalcTics (void)
 //
 		do
 		{
-			newtime = TimeCount;
+			newtime = SD_GetTimeCount();
 			tics = newtime-lasttimecount;
 		} while (tics<MINTICS);
 		lasttimecount = newtime;
@@ -1476,7 +1478,7 @@ void RF_CalcTics (void)
 
 		if (tics>MAXTICS)
 		{
-			TimeCount -= (tics-MAXTICS);
+			SD_SetTimeCount(SD_GetTimeCount() - (tics-MAXTICS));
 			tics = MAXTICS;
 		}
 	}
@@ -2839,7 +2841,9 @@ void RF_Refresh (void)
 //
 // calculate tics since last refresh for adaptive timing
 //
-	RFL_CalcTics ();
+	// TODO (Chocolate Cat3D): Should that be RFL_CalcTics instead?
+	RF_CalcTics ();
+	//RFL_CalcTics ();
 }
 
 #endif		// GRMODE == CGAGR

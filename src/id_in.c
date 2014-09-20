@@ -35,7 +35,7 @@
 //	DEBUG - there are more globals
 //
 
-#include "ID_HEADS.H"
+#include "id_heads.h"
 #pragma	hdrstop
 
 #define	KeyInt	9	// The keyboard ISR number
@@ -100,7 +100,6 @@ static	id0_byte_t        id0_far ASCIINames[] =		// Unshifted ASCII for scan cod
 	0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,	// 6
 	0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0   	// 7
 					},
-
 					*ScanNames[] =		// Scan code names with single chars
 					{
 	"?","?","1","2","3","4","5","6","7","8","9","0","-","+","?","?",
@@ -134,9 +133,9 @@ static	Direction	DirTable[] =		// Quick lookup for total direction
 					};
 
 static	void			(*INL_KeyHook)(void);
-static	void interrupt	(*OldKeyVect)(void);
+//static	void interrupt	(*OldKeyVect)(void);
 
-static	id0_char_t			*ParmStrings[] = {"nojoys","nomouse",nil};
+static	id0_char_t			*ParmStrings[] = {"nojoys","nomouse",id0_nil_t};
 
 //	Internal routines
 
@@ -145,18 +144,22 @@ static	id0_char_t			*ParmStrings[] = {"nojoys","nomouse",nil};
 //	INL_KeyService() - Handles a keyboard interrupt (key up/down)
 //
 ///////////////////////////////////////////////////////////////////////////
-static void interrupt
-INL_KeyService(void)
+static void
+INL_KeyService(id0_byte_t k)
 {
-static	id0_boolean_t	special;
-		id0_byte_t	k,c,
-				temp;
+	// NOTE: The original signature of the function is static void(void),
+	// but we get the scancode as an argument rather than via inportb now
+	// (and there's no need to clear the key)
 
+	static id0_boolean_t special;
+	id0_byte_t c;
+#if 0
 	k = inportb(0x60);	// Get the scan code
 
 	// Tell the XT keyboard controller to clear the key
 	outportb(0x61,(temp = inportb(0x61)) | 0x80);
 	outportb(0x61,temp);
+#endif
 
 	if (k == 0xe0)		// Special key prefix
 		special = true;
@@ -210,7 +213,7 @@ static	id0_boolean_t	special;
 
 	if (INL_KeyHook && !special)
 		INL_KeyHook();
-	outportb(0x20,0x20);
+	//outportb(0x20,0x20);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -222,9 +225,9 @@ static	id0_boolean_t	special;
 static void
 INL_GetMouseDelta(id0_int_t *x,id0_int_t *y)
 {
-	Mouse(MDelta);
-	*x = _CX;
-	*y = _DX;
+	// TODO: (CHOCOLATE CAT3D): IMPLEMENT!
+	*x = 0;
+	*y = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -236,10 +239,8 @@ INL_GetMouseDelta(id0_int_t *x,id0_int_t *y)
 static id0_word_t
 INL_GetMouseButtons(void)
 {
-	id0_word_t	buttons;
-
-	Mouse(MButtons);
-	buttons = _BX;
+	// TODO: (CHOCOLATE CAT3D): IMPLEMENT!
+	id0_word_t buttons = 0;
 	return(buttons);
 }
 
@@ -251,73 +252,9 @@ INL_GetMouseButtons(void)
 void
 IN_GetJoyAbs(id0_word_t joy,id0_word_t *xp,id0_word_t *yp)
 {
-	id0_byte_t	xb,yb,
-			xs,ys;
-	id0_word_t	x,y;
-
-	x = y = 0;
-	xs = joy? 2 : 0;		// Find shift value for x axis
-	xb = 1 << xs;			// Use shift value to get x bit mask
-	ys = joy? 3 : 1;		// Do the same for y axis
-	yb = 1 << ys;
-
-// Read the absolute joystick values
-asm		pushf				// Save some registers
-asm		push	si
-asm		push	di
-asm		cli					// Make sure an interrupt doesn't screw the timings
-
-
-asm		mov		dx,0x201
-asm		in		al,dx
-asm		out		dx,al		// Clear the resistors
-
-asm		mov		ah,[xb]		// Get masks into registers
-asm		mov		ch,[yb]
-
-asm		xor		si,si		// Clear count registers
-asm		xor		di,di
-asm		xor		bh,bh		// Clear high id0_byte_t of bx for later
-
-asm		push	bp			// Don't mess up stack frame
-asm		mov		bp,MaxJoyValue
-
-loop:
-asm		in		al,dx		// Get bits indicating whether all are finished
-
-asm		dec		bp			// Check bounding register
-asm		jz		done		// We have a silly value - abort
-
-asm		mov		bl,al		// Duplicate the bits
-asm		and		bl,ah		// Mask off useless bits (in [xb])
-asm		add		si,bx		// Possibly increment count register
-asm		mov		cl,bl		// Save for testing later
-
-asm		mov		bl,al
-asm		and		bl,ch		// [yb]
-asm		add		di,bx
-
-asm		add		cl,bl
-asm		jnz		loop 		// If both bits were 0, drop out
-
-done:
-asm     pop		bp
-
-asm		mov		cl,[xs]		// Get the number of bits to shift
-asm		shr		si,cl		//  and shift the count that many times
-
-asm		mov		cl,[ys]
-asm		shr		di,cl
-
-asm		mov		[x],si		// Store the values into the variables
-asm		mov		[y],di
-
-asm		pop		di
-asm		pop		si
-asm		popf				// Restore the registers
-
-	*xp = x;
-	*yp = y;
+	// TODO: (CHOCOLATE CAT3D): IMPLEMENT!
+	*xp = 0;
+	*yp = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -385,7 +322,7 @@ static	id0_longword_t	lasttime;
 
 	if (adaptive)
 	{
-		time = (TimeCount - lasttime) / 2;
+		time = (SD_GetTimeCount() - lasttime) / 2;
 		if (time)
 		{
 			if (time > 8)
@@ -394,7 +331,7 @@ static	id0_longword_t	lasttime;
 			*dy *= time;
 		}
 	}
-	lasttime = TimeCount;
+	lasttime = SD_GetTimeCount();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -406,13 +343,8 @@ static	id0_longword_t	lasttime;
 static id0_word_t
 INL_GetJoyButtons(id0_word_t joy)
 {
-register	id0_word_t	result;
-
-	result = inportb(0x201);	// Get all the joystick buttons
-	result >>= joy? 6 : 4;	// Shift into bits 0-1
-	result &= 3;				// Mask off the useless bits
-	result ^= 3;
-	return(result);
+	// TODO: (CHOCOLATE CAT3D): IMPLEMENT!
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -430,8 +362,8 @@ IN_GetJoyButtonsDB(id0_word_t joy)
 	do
 	{
 		result1 = INL_GetJoyButtons(joy);
-		lasttime = TimeCount;
-		while (TimeCount == lasttime)
+		lasttime = SD_GetTimeCount();
+		while (SD_GetTimeCount() == lasttime)
 			;
 		result2 = INL_GetJoyButtons(joy);
 	} while (result1 != result2);
@@ -450,8 +382,9 @@ INL_StartKbd(void)
 
 	IN_ClearKeysDown();
 
-	OldKeyVect = getvect(KeyInt);
-	setvect(KeyInt,INL_KeyService);
+	//OldKeyVect = getvect(KeyInt);
+	BE_SDL_StartKeyboardService(&INL_KeyService);
+	//setvect(KeyInt,INL_KeyService);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -462,9 +395,10 @@ INL_StartKbd(void)
 static void
 INL_ShutKbd(void)
 {
-	poke(0x40,0x17,peek(0x40,0x17) & 0xfaf0);	// Clear ctrl/alt/shift flags
+	//poke(0x40,0x17,peek(0x40,0x17) & 0xfaf0);	// Clear ctrl/alt/shift flags
 
-	setvect(KeyInt,OldKeyVect);
+	BE_SDL_StopKeyboardService(&INL_KeyService);
+	//setvect(KeyInt,OldKeyVect);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -475,6 +409,9 @@ INL_ShutKbd(void)
 static id0_boolean_t
 INL_StartMouse(void)
 {
+	// TODO (CHOCOLATE CAT3D): Consider optionally returning false?
+	return(true);
+#if 0
 	if (getvect(MouseInt))
 	{
 		Mouse(MReset);
@@ -482,6 +419,7 @@ INL_StartMouse(void)
 			return(true);
 	}
 	return(false);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1098,7 +1036,7 @@ IN_UserInput(id0_longword_t delay,id0_boolean_t clear)
 {
 	id0_longword_t	lasttime;
 
-	lasttime = TimeCount;
+	lasttime = SD_GetTimeCount();
 	do
 	{
 		if (IN_IsUserInput())
@@ -1107,6 +1045,6 @@ IN_UserInput(id0_longword_t delay,id0_boolean_t clear)
 				IN_AckBack();
 			return(true);
 		}
-	} while (TimeCount - lasttime < delay);
+	} while (SD_GetTimeCount() - lasttime < delay);
 	return(false);
 }
